@@ -1,0 +1,14 @@
+# questionnaire-js:
+#   filter: rjsmin
+#   output: ckanext-questionnaire/%(version)s-questionnaire.js
+#   contents:
+#     - js/questionnaire.js
+#   extra:
+#     preload:
+#       - base/main
+
+# questionnaire-css:
+#   filter: cssrewrite
+#   output: ckanext-questionnaire/%(version)s-questionnaire.css
+#   contents:
+#     - css/questionnaire.css

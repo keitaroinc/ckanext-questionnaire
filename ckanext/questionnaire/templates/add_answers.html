@@ -1,0 +1,19 @@
+{% extends "page.html" %}
+  
+  {% block subtitle %}{{ _('Add Answers') }}{% endblock %}
+
+  {% block breadcrumb_content %}
+  <li class="active">{% link_for _('Add Answers'), named_route='questionnaire.add_answers' %}</li>
+  {% endblock %}
+
+  {% block secondary%}
+  {% endblock %}
+  
+{% block primary %}
+    <label class="control-label" for="field-add-answer">Add Answer</label>
+    <input id="field-add-question" class="form-control", type="text" name="add-question" placeholder="Input answer option here">
+    <div style="margin-top: 1em;">
+    {% link_for _('Add another option'), named_route='questionnaire.add_answers', class_='btn btn-primary', icon='plus-square' %}
+    {% link_for _('Save and exit'), named_route='questionnaire.add_questions', class_='btn btn-primary', icon='plus-square' %}
+    </div>
+{% endblock %}

@@ -1,0 +1,8 @@
+{% ckan_extends %}
+
+{% block content_primary_nav %}  
+{{ super() }}   
+<ul class="nav nav-tabs">
+  {{ h.build_nav_icon('questionnaire.answers', _('Questions'), icon='list') }}
+</ul>
+{% endblock %} 
