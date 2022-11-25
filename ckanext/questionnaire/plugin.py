@@ -2,6 +2,7 @@ from flask import Blueprint
 
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
+import ckanext.questionnaire.cli as cli
 from ckanext.questionnaire.views import questionnaire
 
 
@@ -9,6 +10,7 @@ class QuestionnairePlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.ITemplateHelpers)
     plugins.implements(plugins.IBlueprint)
+    plugins.implements(plugins.IClick)
 
     # IConfigurer
 
@@ -24,3 +26,6 @@ class QuestionnairePlugin(plugins.SingletonPlugin):
 
     def get_blueprint(self):
         return questionnaire
+
+    def get_commands(self):
+        return cli.get_commands()
