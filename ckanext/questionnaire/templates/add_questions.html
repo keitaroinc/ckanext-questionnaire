@@ -8,11 +8,16 @@
 
   {% block secondary%}
   {% endblock %}
-  
+
 {% block primary %}
+<form id="question_add_form" method="post">
     <label class="control-label" for="field-add-question">Add Question</label>
     <input id="field-add-question" class="form-control", type="text" name="add-question" placeholder="Input question here">
     <div style="margin-top: 1em;">
-    {% link_for _('Add Question'), named_route='questionnaire.add_answers', class_='btn btn-primary', icon='plus-square' %}
+      <button type='submit', class ='btn btn-primary', icon='plus-square' href="{{ h.url_for('questionnaire.add_answers') }}">{{_('Add Question')}}</button>
     </div>
+  </form>
+  
 {% endblock %}
+
+

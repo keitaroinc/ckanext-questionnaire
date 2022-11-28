@@ -1,10 +1,9 @@
 import sys
 import uuid
 import datetime
-import six
+from six import text_type
 
-from sqlalchemy import Column
-from sqlalchemy import types
+from sqlalchemy import Column, Unicode, types,  DateTime
 from sqlalchemy.ext.declarative import declarative_base
 
 import ckan.model as model
@@ -15,6 +14,10 @@ log = __import__('logging').getLogger(__name__)
 
 Base = declarative_base()
 
+def make_uuid():
+    return text_type(uuid.uuid4())
+
+
 if sys.version_info[0] >= 3:
     unicode = str
 
@@ -23,26 +26,31 @@ class Question(Base):
 
     __tablename__ = 'question'
 
-    id = Column(types.Integer, primary_key=True)
+    id = Column(Unicode, primary_key=True, default=make_uuid)
     question_text = Column(types.UnicodeText, nullable=False, index=True)
     created = Column(types.DateTime, default=datetime.datetime.now)
+
+
 
 class Answer_option(Base):
     
     __tablename__ = 'answer_option'
 
-    id = Column(types.Integer, primary_key=True)
-    question_id = Column(types.Integer)
+    id = Column(Unicode, primary_key=True, default=make_uuid)
+    question_id = Column(Unicode)
     answer_text = Column(types.UnicodeText, nullable=False, index=True)
+
 
 class Answer(Base):
 
     __tablename__ = 'answer'
 
-    question_id = Column(types.Integer, primary_key=True)
-    user_id = Column(types.UnicodeText, nullable=False, index=True)
+    question_id = Column(Unicode, primary_key=True, default=make_uuid)
+    question_text = Column(types.UnicodeText, nullable=False, index=True)
+    user_name = Column(types.UnicodeText, nullable=False, index=True)
     answer_text = Column(types.UnicodeText, nullable=False, index=True)
     date_answered = Column(types.DateTime, default=datetime.datetime.now)
+
 
 def create_tables():
     Question.__table__.create()

@@ -11,16 +11,23 @@
 
 {{ super() }}
   {% block primary_content_inner %}
-
-  <label class="control-label" for="#">Question 1</label>
-  <select id="answers" class="form-control" name="choose">
-    <option value="Answer 1" selected="Selected">Option 1</option>
-    <option value="Answer 2">Option 2</option>
-    <option value="Answer 3">Option 3</option>
-  </select>
-
-  <div style="margin-top: 1em;">
-    {% link_for _('Submit'), named_route='questionnaire.add_answers', class_='btn btn-primary', icon='plus-square' %}
+  <form id="answers_add_form" method="POST">
+  {% for question in q_list %}
+    <p style="margin-bottom:1.5em;">
+    <label class="control-label" id="field-q{{ loop.index }}" name="q{{ loop.index }}">{{ question.question_text }}</label>
+    <select id="answers" class="form-control" name="choose">
+      {% for answer_option in answer_list %}
+        {% if question.id == answer_option.question_id%}
+          <option value="{{ answer_option.answer_text }}" name="a{{ loop.index }}">{{answer_option.answer_text}}</option>
+        {% endif %}
+    </p>  
+      {% endfor %}
+    </select>
+  {% endfor %}
+  
+  <div style="margin-top: 1.5em;">
+    <button type='submit', class ='btn btn-primary', icon='plus-square' href="{{ h.url_for('questionnaire.answers') }}">{{_('Submit')}}</button>
   </div>
+</form>
 
   {% endblock %}
