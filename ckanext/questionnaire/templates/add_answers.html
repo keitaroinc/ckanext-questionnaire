@@ -14,8 +14,8 @@
     <label class="control-label" for="field-add-answer">Add Answer</label>
     <input id="field-add-answer-option" class="form-control", type="text" name="add-answer-option" placeholder="Input answer option here">
     <div style="margin-top: 1em;">
-      <button type='submit', class ='btn btn-primary', icon='plus-square' href="{{ h.url_for('questionnaire.add_answers') }}">Add another option</button>
-    {% link_for _('Save and exit'), named_route='questionnaire.add_questions', class_='btn btn-primary', icon='plus-square' %}
+      <button type='submit', class ='btn btn-primary', icon='plus-square' href="{{ h.url_for('questionnaire.add_answers') }}">Add answer option</button>
+    {% link_for _('Add another question'), named_route='questionnaire.add_questions', class_='btn btn-primary'%}
     </div>
 </form>
 {% endblock %}

@@ -62,18 +62,31 @@ class AnswersView(MethodView):
         
         form_data = toolkit.request.form.to_dict()
 
-        for x, y  in form_data.items():
-            answer=Answer()
-            answer.user_name = g.userobj.name
-            answer.date_answered = str(datetime.now())
-            answer.question_text = x
-            answer.answer_text = y
-            model.Session.add(answer)
-            model.Session.commit()
+        if model.Session.query(Answer).filter( Answer.user_name == g.userobj.name).count() == 0 :
+        
+            for x, y  in form_data.items():
+                answer=Answer()
+                answer.user_name = g.userobj.name
+                answer.date_answered = str(datetime.now())
+                answer.question_text = x
+                answer.answer_text = y
+                model.Session.add(answer)
+                model.Session.commit()
                 
+        else:
+            model.Session.query(Answer).filter(Answer.user_name == g.userobj.name).delete()
+            model.Session.commit()
+            for x, y  in form_data.items():
+                answer=Answer()
+                answer.user_name = g.userobj.name
+                answer.date_answered = str(datetime.now())
+                answer.question_text = x
+                answer.answer_text = y
+                model.Session.add(answer)
+                model.Session.commit()
+
         
-        
-        return toolkit.redirect_to(toolkit.url_for("questionnaire.answers"))
+        return toolkit.redirect_to(toolkit.url_for("dashboard.index"))
 
 
 
