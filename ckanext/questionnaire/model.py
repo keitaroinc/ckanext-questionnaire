@@ -45,7 +45,7 @@ class Answer(Base):
 
     __tablename__ = 'answer'
 
-    question_id = Column(Unicode, primary_key=True, default=make_uuid)
+    id = Column(Unicode, primary_key=True, default=make_uuid)
     question_text = Column(types.UnicodeText, nullable=False, index=True)
     user_name = Column(types.UnicodeText, nullable=False, index=True)
     answer_text = Column(types.UnicodeText, nullable=False, index=True)

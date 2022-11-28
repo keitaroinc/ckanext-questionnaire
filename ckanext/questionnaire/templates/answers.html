@@ -15,7 +15,7 @@
   {% for question in q_list %}
     <p style="margin-bottom:1.5em;">
     <label class="control-label" id="field-q{{ loop.index }}" name="q{{ loop.index }}">{{ question.question_text }}</label>
-    <select id="answers" class="form-control" name="choose">
+    <select id="answers" class="form-control" name="{{ question.question_text }}">
       {% for answer_option in answer_list %}
         {% if question.id == answer_option.question_id%}
           <option value="{{ answer_option.answer_text }}" name="a{{ loop.index }}">{{answer_option.answer_text}}</option>

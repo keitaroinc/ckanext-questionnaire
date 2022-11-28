@@ -60,19 +60,17 @@ class AnswersView(MethodView):
 
     def post(self):
         
-        q_list = model.Session.query(Question).all()
-      
-        answer=Answer()
-        answer.user_name = "blagoja"
-        #answer.question_text=toolkit.request.form.get("q1")
-        x = toolkit.request.form.get("q1")
-        answer.answer_text=toolkit.request.form("a1")
-        answer.date_answered = str(datetime.now())
-        print (x)
-        #model.Session.add(answer)
-        #model.Session.commit()
-        
-        
+        form_data = toolkit.request.form.to_dict()
+
+        for x, y  in form_data.items():
+            answer=Answer()
+            answer.user_name = g.userobj.name
+            answer.date_answered = str(datetime.now())
+            answer.question_text = x
+            answer.answer_text = y
+            model.Session.add(answer)
+            model.Session.commit()
+                
         
         
         return toolkit.redirect_to(toolkit.url_for("questionnaire.answers"))
