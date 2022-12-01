@@ -6,6 +6,8 @@ import ckanext.questionnaire.cli as cli
 from ckanext.questionnaire.views import questionnaire
 
 
+
+
 class QuestionnairePlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.ITemplateHelpers)

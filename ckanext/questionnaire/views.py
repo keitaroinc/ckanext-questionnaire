@@ -4,6 +4,7 @@ from ckan.common import g
 import ckan.model as model
 import ckan.plugins.toolkit as toolkit
 from ckanext.questionnaire.model import Question, Answer_option, Answer
+from ckanext.questionnaire.answers_blueprint import download_answers
 from datetime import datetime
 import sqlalchemy
 
@@ -89,10 +90,12 @@ class AnswersView(MethodView):
         return toolkit.redirect_to(toolkit.url_for("dashboard.index"))
 
 
-
 questionnaire.add_url_rule(
     '/add_questions', view_func=CreateQuestionView.as_view(str("add_questions")))
 questionnaire.add_url_rule(
     '/add_answers', view_func=AddAnswerView.as_view(str("add_answers")))
 questionnaire.add_url_rule(
     '/answers', view_func=AnswersView.as_view(str("answers")))
+questionnaire.add_url_rule(
+    '/download_answers', view_func=download_answers)
+
