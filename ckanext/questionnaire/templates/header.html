@@ -3,8 +3,8 @@
 {% block header_account_logged %}
   {% if c.userobj.sysadmin %}
   <li>
-    <a href="{{ h.url_for('questionnaire.add_questions') }}" title="{{ _('Questions') }}">
-      <i class="fa fa-file" aria-hidden="true"></i>
+    <a href="{{ h.url_for('questionnaire.add_questions') }}" title="{{ _('User Questions') }}">
+      <i class="fa fa-address-book" aria-hidden="true"></i>
     </a>
   </li>
   {% endif %}

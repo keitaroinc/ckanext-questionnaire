@@ -1,8 +1,5 @@
-import sys
-import uuid
-import datetime
+import datetime, uuid, sys
 from six import text_type
-
 from sqlalchemy import Column, Unicode, types,  DateTime
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -22,12 +19,15 @@ if sys.version_info[0] >= 3:
     unicode = str
 
 
+
 class Question(Base):
 
     __tablename__ = 'question'
 
     id = Column(Unicode, primary_key=True, default=make_uuid)
     question_text = Column(types.UnicodeText, nullable=False, index=True)
+    question_type = Column(types.UnicodeText, default="text")
+    mandatory = Column(types.Boolean, default=True)
     created = Column(types.DateTime, default=datetime.datetime.now)
 
 
