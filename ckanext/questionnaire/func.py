@@ -27,6 +27,11 @@ def preprare_list(**in_dict):
         element1=str(out_list[out_len-1][0])
         element2="<" + str(out_list[out_len-1][1]) + ">" + "<" + str(in_list[len(in_list)-1][1])+">"
         out_list[out_len-1]=((element1, element2))
+    else:
+        out_len=(len(out_list))
+        in_len=len(in_list)
+        out_list.append(in_list[in_len-1])
+        #breakpoint()
     
     return (out_list)
 
