@@ -21,7 +21,7 @@ class CreateQuestionView(MethodView):
     def post(self):
 
         question = Question()
-        answer_option=Answer_option()
+        
         question.question_text = toolkit.request.form.get("add-question")
         question.question_type = toolkit.request.form.get("question_type")
         mandatory=toolkit.request.form.get("mandatory")
@@ -33,11 +33,12 @@ class CreateQuestionView(MethodView):
         model.Session.add(question)
         model.Session.commit()
         
+        #answer_option=Answer_option()
         session['question_id'] = question.id
-        answer_option.question_id = session['question_id']
-        answer_option.answer_text= toolkit.request.form.get("add-answer-option")
-        model.Session.add(answer_option)
-        model.Session.commit()
+        #answer_option.question_id = session['question_id']
+        #answer_option.answer_text= toolkit.request.form.get("add-answer-option")
+        #model.Session.add(answer_option)
+        #model.Session.commit()
         
         return toolkit.redirect_to(toolkit.url_for("questionnaire.add_questions"))
 
@@ -110,6 +111,30 @@ class AnswersView(MethodView):
         
         return toolkit.redirect_to(toolkit.url_for("dashboard.index"))
 
+class DeleteQuestionView(MethodView):
+
+    def get(self):
+        q_list = model.Session.query(Question).all()
+
+        content={
+            'q_list' : q_list
+        }
+        return render_template("delete_questions.html", **content)
+
+    def post(self):
+        
+        qid=toolkit.request.form.get('qid')
+        try:
+            model.Session.query(Question).filter(Question.id == qid).delete()
+            model.Session.query(Answer_option).filter(Answer_option.question_id == qid).delete()
+            model.Session.commit()
+        except Exception as e:
+            pass
+            
+        
+        return toolkit.redirect_to(toolkit.url_for("questionnaire.delete_questions"))
+
+
 
 questionnaire.add_url_rule(
     '/add_questions', view_func=CreateQuestionView.as_view(str("add_questions")))
@@ -119,4 +144,6 @@ questionnaire.add_url_rule(
     '/answers', view_func=AnswersView.as_view(str("answers")))
 questionnaire.add_url_rule(
     '/download_answers', view_func=download_answers)
+questionnaire.add_url_rule(
+    '/delete_questions/', view_func=DeleteQuestionView.as_view(str("delete_questions")))
 
