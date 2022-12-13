@@ -37,8 +37,8 @@
       {% set rowloop = loop %}
       {% for answer_option in answer_list %}          
         {% if question.id == answer_option.question_id %}
-        <input type="checkbox" name="q{{ rowloop.index }}-option{{ loop.index }}" value="{{answer_option.answer_text}}">
-        <label for="q{{ rowloop.index }}-option{{ loop.index }}">{{answer_option.answer_text}}</label><br>
+        <input type="checkbox" name="00qu{{ rowloop.index }}-op{{ loop.index }}-{{ question.id }}" value="{{answer_option.answer_text}}">
+        <label for="00qu{{ rowloop.index }}-op{{ loop.index }}-{{ question.id }}">{{answer_option.answer_text}}</label><br>
         {% endif %}      
       {% endfor %}
     {% endif %}

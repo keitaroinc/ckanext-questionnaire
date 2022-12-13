@@ -5,6 +5,7 @@ import ckan.model as model
 import ckan.plugins.toolkit as toolkit
 from ckanext.questionnaire.model import Question, Answer_option, Answer
 from ckanext.questionnaire.answers_blueprint import download_answers
+from ckanext.questionnaire.func import preprare_list, q_text
 from datetime import datetime
 import sqlalchemy
 
@@ -75,27 +76,34 @@ class AnswersView(MethodView):
     def post(self):
         
         form_data = toolkit.request.form.to_dict()
+        #prepare data for checkpoint answers save
+        final_data = preprare_list(**form_data)
+        final_data = q_text(*final_data)
 
         if model.Session.query(Answer).filter( Answer.user_name == g.userobj.name).count() == 0 :
-        
-            for x, y  in form_data.items():
+
+            # Save the answers to database
+            for x in final_data:
                 answer=Answer()
                 answer.user_name = g.userobj.name
                 answer.date_answered = str(datetime.now())
-                answer.question_text = x
-                answer.answer_text = y
+                answer.question_text = x[0]
+                answer.answer_text = x[1]
                 model.Session.add(answer)
                 model.Session.commit()
                 
         else:
+            #delete previous answers
             model.Session.query(Answer).filter(Answer.user_name == g.userobj.name).delete()
             model.Session.commit()
-            for x, y  in form_data.items():
+            
+            # Save the answers to database
+            for x in final_data:
                 answer=Answer()
                 answer.user_name = g.userobj.name
                 answer.date_answered = str(datetime.now())
-                answer.question_text = x
-                answer.answer_text = y
+                answer.question_text = x [0]
+                answer.answer_text = x[1]
                 model.Session.add(answer)
                 model.Session.commit()
 
