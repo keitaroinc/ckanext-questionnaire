@@ -40,7 +40,7 @@ class CreateQuestionView(MethodView):
         #model.Session.add(answer_option)
         #model.Session.commit()
         
-        return toolkit.redirect_to(toolkit.url_for("questionnaire.add_questions"))
+        return toolkit.redirect_to(toolkit.url_for("questionnaire.add_answers"))
 
 # AddAnswerView Not in use now
 class AddAnswerView(MethodView):
