@@ -16,7 +16,7 @@ def preprare_list(**in_dict):
         element2=str(in_list[i][1])
 
         while element1[:6] == str(in_list[i+1][0][:6]) and i<len(in_list)-2:
-            element2="<"+element2 +">"+"<" + str(in_list[i+1][1])+">"
+            element2= element2 +" | " + str(in_list[i+1][1])
             i=i+1
             
         out_list.append((element1, element2))
@@ -25,7 +25,7 @@ def preprare_list(**in_dict):
     if str(in_list[len(in_list)-1])[:6] == str(in_list [len(in_list)-2])[:6]:
         out_len=(len(out_list))
         element1=str(out_list[out_len-1][0])
-        element2="<" + str(out_list[out_len-1][1]) + ">" + "<" + str(in_list[len(in_list)-1][1])+">"
+        element2=str(out_list[out_len-1][1]) + " | " + str(in_list[len(in_list)-1][1])
         out_list[out_len-1]=((element1, element2))
     else:
         out_len=(len(out_list))
