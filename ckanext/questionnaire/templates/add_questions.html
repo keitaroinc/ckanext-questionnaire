@@ -11,10 +11,26 @@
 
 {% block primary %}
 <form id="question_add_form" method="post">
-    <label class="control-label" for="field-add-question">Add Question</label>
+    <label class="control-label" for="field-add-question">Type of the Question</label>
+    <select id="question_type" class="form-control" name="question_type">
+         <option name="text_question">Text Question</option>
+         <option name="checkbox_question">Checkbox Question</option>
+    </select>
+    <p style="margin-top: 1em;"></p>
+    <label class="control-label" for="field-add-question">Is it mandatory question</label>
+    <select id="mandatory" class="form-control" name="mandatory">
+         <option name="mandatory_yes">Yes</option>
+         <option name="mandatory_no">No</option>
+    </select>
+    <p style="margin-top: 1em;"></p>
+    <label class="control-label" for="field-add-question">Add Question Text</label>
     <input id="field-add-question" class="form-control", type="text" name="add-question" placeholder="Input question here">
-    <div style="margin-top: 1em;">
-      <button type='submit', class ='btn btn-primary', icon='plus-square' href="{{ h.url_for('questionnaire.add_answers') }}">{{_('Add Question')}}</button>
+    <div style="margin-top: 1em; margin-bottom:1em;">
+      <!--
+      <label class="control-label" for="field-add-answer">Add Answer Option</label>
+      <input id="field-add-answer-option" class="form-control", type="text" name="add-answer-option" placeholder="Input answer option here">
+      <p style="margin-top: 1em;"></p>-->
+      <button type='submit', class ='btn btn-primary', icon='plus-square' href="{{ h.url_for('questionnaire.add_questions') }}">{{_('Add Question')}}</button>
     </div>
   </form>
   

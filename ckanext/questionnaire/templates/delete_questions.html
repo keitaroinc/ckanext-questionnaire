@@ -1,0 +1,42 @@
+{% extends "page.html" %}
+  
+  {% block subtitle %}{{ _('Delete Questions') }}{% endblock %}
+
+  {% block breadcrumb_content %}
+  <li class="active">{% link_for _('Delete Questions'), named_route='questionnaire.delete_questions' %}</li>
+  {% endblock %}
+
+  {% block secondary%}
+  {% endblock %}
+
+{% block primary %}
+<h2>Delete Questions</h2>
+ 
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Question</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for question in q_list %}
+    <tr>
+      <th scope="row">{{loop.index}}</th>
+      <td>{{ question.question_text }}</td>
+      <td>
+        <span class="pull-right">
+          <form method="post">
+            <input type="hidden" id="qid" name="qid" value="{{ question.id }}">
+            <button type='submit', class ='btn btn-danger', href="{{ h.url_for('questionnaire.delete_questions') }}">Delete</button>
+          </form>
+        </span>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+  
+{% endblock %}

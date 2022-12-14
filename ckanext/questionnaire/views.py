@@ -124,9 +124,12 @@ class DeleteQuestionView(MethodView):
     def post(self):
         
         qid=toolkit.request.form.get('qid')
-        model.Session.query(Question).filter(Question.id == qid).delete()
-        model.Session.commit()
-
+        try:
+            model.Session.query(Question).filter(Question.id == qid).delete()
+            model.Session.query(Answer_option).filter(Answer_option.question_id == qid).delete()
+            model.Session.commit()
+        except Exception as e:
+            pass
             
         
         return toolkit.redirect_to(toolkit.url_for("questionnaire.delete_questions"))
