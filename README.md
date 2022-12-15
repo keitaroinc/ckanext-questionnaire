@@ -39,7 +39,7 @@ To install ckanext-questionnaire:
 
 2. Clone the source and install it on the virtualenv
 
-    git clone https://github.com/blagojabozinovski/ckanext-questionnaire.git
+    git clone https://github.com/keitaroinc/ckanext-questionnaire.git
     cd ckanext-questionnaire
     pip install -e .
 	pip install -r requirements.txt
@@ -52,11 +52,11 @@ To install ckanext-questionnaire:
 
 ON CKAN >= 2.9:
 
-    ckan -c /path/to/ini/file validation init-db
+    ckan -c /path/to/ini/file questionnaire init-db
 
 ON CKAN <= 2.8:
 
-    paster validation init-db -c ../path/to/ini/file
+    paster questionnaire init-db -c ../path/to/ini/file
 
 
 5. Restart CKAN. For example if you've deployed CKAN with Apache on Ubuntu:
