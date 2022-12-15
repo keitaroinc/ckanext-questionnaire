@@ -48,7 +48,18 @@ To install ckanext-questionnaire:
    config file (by default the config file is located at
    `/etc/ckan/default/ckan.ini`).
 
-4. Restart CKAN. For example if you've deployed CKAN with Apache on Ubuntu:
+4. Create the database tables running:
+
+ON CKAN >= 2.9:
+
+    ckan -c /path/to/ini/file validation init-db
+
+ON CKAN <= 2.8:
+
+    paster validation init-db -c ../path/to/ini/file
+
+
+5. Restart CKAN. For example if you've deployed CKAN with Apache on Ubuntu:
 
      sudo service apache2 reload
 
