@@ -1,67 +1,72 @@
-import datetime, uuid, sys
-from six import text_type
-from sqlalchemy import Column, Unicode, types,  DateTime
+from ckan.model.meta import metadata, mapper, Session
+from ckan.model.domain_object import DomainObject
+from ckan.model.types import make_uuid
+from ckan import model
+from sqlalchemy import types, Table, Column, MetaData
 from sqlalchemy.ext.declarative import declarative_base
-
-import ckan.model as model
-from ckan.lib import dictization
-from ckan.plugins import toolkit
-
-log = __import__('logging').getLogger(__name__)
-
-Base = declarative_base()
-
-def make_uuid():
-    return text_type(uuid.uuid4())
+import logging, datetime
 
 
-if sys.version_info[0] >= 3:
-    unicode = str
+log = logging.getLogger(__name__)
+
+
+metadata = MetaData()
+
+
+question_table = Table('question',metadata,
+    Column('id', types.UnicodeText, primary_key=True, default=make_uuid),
+    Column('question_text', types.UnicodeText),
+    Column('question_type', types.UnicodeText, default="text"),
+    Column('mandatory', types.Boolean, default=True),
+    Column('created', types.DateTime, default=datetime.datetime.utcnow),
+    )
+
+question_option_table = Table('question_option',metadata,
+    Column('id', types.UnicodeText, primary_key=True, default=make_uuid),
+    Column('question_id', types.UnicodeText, default=u'{}' ),
+    Column('answer_text', types.UnicodeText, default=u'{}'),
+    )
+
+answer_table = Table('answer',metadata,
+    Column('id', types.UnicodeText, primary_key=True, default=make_uuid),
+    Column('question_text', types.UnicodeText, default=u'{}'),
+    Column('user_name', types.UnicodeText, default=u'{}'),
+    Column('answer_text', types.UnicodeText, default=u'{}'),
+    Column('date_answered', types.DateTime, default=datetime.datetime.utcnow),
+    )
+
+
+class Question(DomainObject):
+
+    def __init__(self, **kwargs):
+        self.id=make_uuid()
+
+    @classmethod
+    def get_all(cls):
+        return Session.query(cls).all()
+
+
+class QuestionOption(DomainObject):
+
+    def __init__(self, **kwargs):
+        self.id=make_uuid()
+
+class Answer(DomainObject):
+
+    def __init__(self, **kwargs):
+        self.id=make_uuid()
+
+
+mapper(Question, question_table, properties={})
+mapper(QuestionOption, question_option_table, properties={})
+mapper(Answer, answer_table, properties={})
 
 
 
-class Question(Base):
+def init_tables(self):
+    metadata.create_all(model.meta.engine)
+    log.info(u'Questionnaire tables created')
 
-    __tablename__ = 'question'
-
-    id = Column(Unicode, primary_key=True, default=make_uuid)
-    question_text = Column(types.UnicodeText, nullable=False, index=True)
-    question_type = Column(types.UnicodeText, default="text")
-    mandatory = Column(types.Boolean, default=True)
-    created = Column(types.DateTime, default=datetime.datetime.now)
-
-
-
-class Answer_option(Base):
-    
-    __tablename__ = 'answer_option'
-
-    id = Column(Unicode, primary_key=True, default=make_uuid)
-    question_id = Column(Unicode)
-    answer_text = Column(types.UnicodeText, nullable=False, index=True)
-
-
-class Answer(Base):
-
-    __tablename__ = 'answer'
-
-    id = Column(Unicode, primary_key=True, default=make_uuid)
-    question_text = Column(types.UnicodeText, nullable=False, index=True)
-    user_name = Column(types.UnicodeText, nullable=False, index=True)
-    answer_text = Column(types.UnicodeText, nullable=False, index=True)
-    date_answered = Column(types.DateTime, default=datetime.datetime.now)
-
-
-def create_tables():
-    Question.__table__.create()
-    Answer_option.__table__.create()
-    Answer.__table__.create()
-
-    log.info(u'Questionnarie database tables created')
-
-
-
-def init_tables(engine):
-    Base.metadata.create_all(engine)
-    log.info('Questionnarie database tables created')
-
+def del_all_tables(self):
+    metadata.drop_all(model.meta.engine)
+    log.info(u'Questionnaire tables deleted')

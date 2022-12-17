@@ -19,8 +19,13 @@
   <!--This section is for text questions-->
     <p style="margin-top:1.5em;"></p>
     {% if question.question_type=="Text Question" %}
+    {% set mandatory_check ='required'%}
+    {% if question.mandatory == False %}
+    {% set mandatory_check =''%}
+    {% endif %}
         <label class="control-label" id="field-q{{ loop.index }}" name="q{{ loop.index }}">{{ question.question_text }}</label>
-        <select id="answers" class="form-control" name="{{ question.question_text }}">
+        <select id="answers" class="form-control" name="{{ question.question_text }}" "{{ mandatory_check }} ">
+          <option value=""></option>
           {% for answer_option in answer_list %}          
             {% if question.id == answer_option.question_id %}
             <option value="{{ answer_option.answer_text }}" name="a{{ loop.index }}">{{answer_option.answer_text}}</option>

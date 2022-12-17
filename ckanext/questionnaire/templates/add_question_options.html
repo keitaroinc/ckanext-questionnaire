@@ -1,0 +1,21 @@
+{% extends "page.html" %}
+  
+  {% block subtitle %}{{ _('Add Question Options') }}{% endblock %}
+
+  {% block breadcrumb_content %}
+  <li class="active">{% link_for _('Add Question Options'), named_route='questionnaire.add_question_option' %}</li>
+  {% endblock %}
+
+  {% block secondary%}
+  {% endblock %}
+  
+{% block primary %}
+<form id="question_add_form" method="post">
+    <label class="control-label" for="field-question_option">Add question option</label>
+    <input id="field-question_option" class="form-control", type="text" name="add_question_option" placeholder="Input Question option here">
+    <div style="margin-top: 1em;">
+      <button type='submit', class ='btn btn-primary', icon='plus-square' href="{{ h.url_for('questionnaire.add_question_option') }}">Add question option</button>
+    {% link_for _('Add another question'), named_route='questionnaire.add_questions', class_='btn btn-primary'%}
+    </div>
+</form>
+{% endblock %}

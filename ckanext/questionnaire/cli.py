@@ -16,3 +16,8 @@ def questionnaire():
 @questionnaire.command()
 def init_db():
      utils.init_db()
+
+
+@questionnaire.command()
+def dell_db():
+     utils.drop_db()
