@@ -1,8 +1,11 @@
+import model
 from ckan.model.meta import metadata, mapper, Session
 from ckan.model.domain_object import DomainObject
 from ckan.model.types import make_uuid
 from ckan import model
-from sqlalchemy import types, Table, Column, MetaData
+from flask import g
+from sqlalchemy import types, Table, Column, MetaData, ForeignKey
+from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 import logging, datetime
 
@@ -23,14 +26,14 @@ question_table = Table('question',metadata,
 
 question_option_table = Table('question_option',metadata,
     Column('id', types.UnicodeText, primary_key=True, default=make_uuid),
-    Column('question_id', types.UnicodeText, default=u'{}' ),
+    Column('question_id', ForeignKey('question.id')),
     Column('answer_text', types.UnicodeText, default=u'{}'),
     )
 
 answer_table = Table('answer',metadata,
     Column('id', types.UnicodeText, primary_key=True, default=make_uuid),
-    Column('question_text', types.UnicodeText, default=u'{}'),
-    Column('user_name', types.UnicodeText, default=u'{}'),
+    Column('question_id', ForeignKey('question.id')),
+    Column('user_id', types.UnicodeText, default=u'{}'),
     Column('answer_text', types.UnicodeText, default=u'{}'),
     Column('date_answered', types.DateTime, default=datetime.datetime.utcnow),
     )
@@ -55,11 +58,12 @@ class Answer(DomainObject):
 
     def __init__(self, **kwargs):
         self.id=make_uuid()
+        self.user_id=g.userobj.id
 
 
 mapper(Question, question_table, properties={})
-mapper(QuestionOption, question_option_table, properties={})
-mapper(Answer, answer_table, properties={})
+mapper(QuestionOption, question_option_table, properties={'question': relationship (Question)})
+mapper(Answer, answer_table, properties={'question': relationship (Question)})
 
 
 
