@@ -19,7 +19,7 @@ metadata = MetaData()
 question_table = Table('question',metadata,
     Column('id', types.UnicodeText, primary_key=True, default=make_uuid),
     Column('question_text', types.UnicodeText),
-    Column('question_type', types.UnicodeText, default="text"),
+    Column('question_type', types.UnicodeText),
     Column('mandatory', types.Boolean, default=True),
     Column('created', types.DateTime, default=datetime.datetime.utcnow),
     )

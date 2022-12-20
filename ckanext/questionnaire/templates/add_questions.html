@@ -1,4 +1,5 @@
 {% extends "page.html" %}
+{% import 'macros/form.html' as form %}
   
   {% block subtitle %}{{ _('Add Questions') }}{% endblock %}
 
@@ -11,11 +12,7 @@
 
 {% block primary %}
 <form id="question_add_form" method="post">
-    <label class="control-label" for="field-add-question">Type of the Question</label>
-    <select id="question_type" class="form-control" name="question_type">
-         <option name="text_question">Text Question</option>
-         <option name="checkbox_question">Checkbox Question</option>
-    </select>
+    {{ form.select(extra_vars.name, id='field-ckan-main-css', label=a, options=extra_vars.types ) }}
     <p style="margin-top: 1em;"></p>
     <label class="control-label" for="field-add-question">Is it mandatory question</label>
     <select id="mandatory" class="form-control" name="mandatory">

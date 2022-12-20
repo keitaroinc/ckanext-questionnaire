@@ -1,7 +1,8 @@
-from ckanext.questionnaire.model import Question
+from ckanext.questionnaire.model import Question, QuestionOption
 import ckan.model as model
 from ckan.lib import base
 import sqlalchemy as db
+import json
 
 
 #Join the checkpoint answers function
@@ -31,7 +32,6 @@ def preprare_list(**in_dict):
         out_len=(len(out_list))
         in_len=len(in_list)
         out_list.append(in_list[in_len-1])
-        #breakpoint()
     
     return (out_list)
 
@@ -49,6 +49,16 @@ def q_text(*in_list):
             y.append(i)
 
     return(y)
+
+
+###################################################
+def questions_select_one(*qlist):
+    select_list={}
+    questions=model.Session.query(Question).filter(Question.question_type == 'Select').all()
+    for question in questions:
+        options=model.Session.query(QuestionOption).filter(QuestionOption.question_id == question.id).all()    
+        return dict(select_list)
+
 
 
 

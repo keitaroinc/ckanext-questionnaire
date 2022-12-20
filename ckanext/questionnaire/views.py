@@ -5,18 +5,38 @@ import ckan.model as model
 import ckan.plugins.toolkit as toolkit
 from ckanext.questionnaire.model import Question, QuestionOption, Answer
 from ckanext.questionnaire.answers_blueprint import download_answers
-from ckanext.questionnaire.func import preprare_list, q_text
+from ckanext.questionnaire.helpers import preprare_list, q_text, questions_select_one
 from datetime import datetime
 
 
 questionnaire = Blueprint('questionnaire', __name__)
 
 
+
+
+def get_question():
+    types = [{'text': 'Text',
+            'value': 'text' },
+            {'text': 'Select One',
+            'value': 'select_one' },
+            {'text': 'Select One',
+            'value': 'select_many' },
+            ]
+    name='Question type'
+
+    return dict(types=types, name=name)
+
+
 class CreateQuestionView(MethodView):
+    
+    
 
     def get(self):
+        items = get_question()
+        data={}
+        vars = dict(data=data, errors={}, **items)
 
-        return toolkit.render("add_questions.html")
+        return render_template("add_questions.html", extra_vars=vars )
 
     def post(self):
 
@@ -60,19 +80,26 @@ class AddQuestionOption(MethodView):
         return toolkit.redirect_to(toolkit.url_for("questionnaire.add_question_option"))
 
 
+
 class AnswersView(MethodView):
+
+
 
     def get(self):
 
+        items = get_question()
         q_list = model.Session.query(Question).all()
-        answer_list = model.Session.query(QuestionOption).all()
-
+        q_option_list = model.Session.query(QuestionOption).all()
+        select_list = questions_select_one(*q_list, *q_option_list)
+        data={}
+        vars = dict(data=data, errors={}, **items)
         content={
             'q_list' : q_list,
-            'answer_list' : answer_list
+            'q_option_list' : q_option_list,
+            'select_list' : select_list,
         }
 
-        return render_template("answers.html", **content)
+        return render_template("answers.html", extra_vars=vars)
 
     def post(self):
         
@@ -125,8 +152,9 @@ class DeleteQuestionView(MethodView):
         
         qid=toolkit.request.form.get('qid')
         try:
-            model.Session.query(Question).filter(Question.id == qid).delete()
             model.Session.query(QuestionOption).filter(QuestionOption.question_id == qid).delete()
+            model.Session.commit()
+            model.Session.query(Question).filter(Question.id == qid).delete()
             model.Session.commit()
         except Exception as e:
             pass
