@@ -13,10 +13,8 @@
 {{ super() }}
 {% block primary_content_inner %}
   <h2 style="margin-top:-1em;">Please answer the following questions</h2>
-  {{ extra_vars.types }}
-  {% set a = types %}
+
   <form id="answers_add_form" method="POST">
-    {{ form.select('items', id='field-ckan-main-css', label=a, options=extra_vars.types ) }}
   
 
     <button type='submit', class ='btn btn-primary', icon='plus-square' href="{{ h.url_for('questionnaire.answers') }}">{{_('Submit')}}</button>

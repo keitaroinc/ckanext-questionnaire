@@ -5,7 +5,7 @@ import ckan.model as model
 import ckan.plugins.toolkit as toolkit
 from ckanext.questionnaire.model import Question, QuestionOption, Answer
 from ckanext.questionnaire.answers_blueprint import download_answers
-from ckanext.questionnaire.helpers import preprare_list, q_text, questions_select_one
+from ckanext.questionnaire.helpers import preprare_list, q_text
 from datetime import datetime
 
 
@@ -48,20 +48,30 @@ def get_question_text():
 
     return dict(name=name, label=label, id=id)
 
+def get_question_option():
+
+    name='question-option'
+    label='Question option'
+    id='field-question-option'
+
+    return dict(name=name, label=label, id=id)
+
+
+
+
 
 class CreateQuestionView(MethodView):
-    
     
 
     def get(self):
         
-        items = get_question_type()
-        items2 = get_question_require()
-        items3 = get_question_text()
+        qtype = get_question_type()
+        qrequire = get_question_require()
+        qtext = get_question_text()
         data={}
-        vars_type = dict(data=data, errors={}, **items)
-        vars_qrequired= dict(data=data, errors={}, **items2)
-        vars_qtext= dict(data=data, errors={}, **items3)
+        vars_type = dict(data=data, errors={}, **qtype)
+        vars_qrequired= dict(data=data, errors={}, **qrequire)
+        vars_qtext= dict(data=data, errors={}, **qtext)
         
 
         return render_template("add_questions.html", extra_vars=vars_type,  vars_qrequired=vars_qrequired, vars_qtext=vars_qtext)
@@ -72,7 +82,7 @@ class CreateQuestionView(MethodView):
         
         question.question_text = toolkit.request.form.get("question-text")
         question.question_type = toolkit.request.form.get("question-type")
-        question.mandatory=toolkit.request.form.get.value('question-required')
+        question.mandatory=toolkit.request.form.get('question-required')
         question.created = str(datetime.now())
         model.Session.add(question)
         model.Session.commit()
@@ -87,13 +97,17 @@ class AddQuestionOption(MethodView):
 
     def get(self):
 
-        return toolkit.render("add_question_options.html")
+        qoption = get_question_option()
+        data={}
+        vars_option = dict(data=data, errors={}, **qoption)
+
+        return render_template("add_question_options.html", vars_option=vars_option)
 
     def post(self):
 
         question_option=QuestionOption()
         question_option.question_id = session['question_id']
-        question_option.answer_text= toolkit.request.form.get("add_question_option")
+        question_option.answer_text= toolkit.request.form.get("question-option")
         model.Session.add(question_option)
         model.Session.commit()
 
@@ -107,19 +121,14 @@ class AnswersView(MethodView):
 
     def get(self):
 
-        items = get_question()
         q_list = model.Session.query(Question).all()
         q_option_list = model.Session.query(QuestionOption).all()
-        select_list = questions_select_one(*q_list, *q_option_list)
-        data={}
-        vars = dict(data=data, errors={}, **items)
         content={
             'q_list' : q_list,
             'q_option_list' : q_option_list,
-            'select_list' : select_list,
         }
 
-        return render_template("answers.html", extra_vars=vars)
+        return render_template("answers.html", content=content)
 
     def post(self):
         

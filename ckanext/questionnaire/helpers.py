@@ -51,14 +51,5 @@ def q_text(*in_list):
     return(y)
 
 
-###################################################
-def questions_select_one(*qlist):
-    select_list={}
-    questions=model.Session.query(Question).filter(Question.question_type == 'Select').all()
-    for question in questions:
-        options=model.Session.query(QuestionOption).filter(QuestionOption.question_id == question.id).all()    
-        return dict(select_list)
-
-
 
 
