@@ -19,5 +19,5 @@ def init_db():
 
 
 @questionnaire.command()
-def dell_db():
+def delete_db():
      utils.drop_db()

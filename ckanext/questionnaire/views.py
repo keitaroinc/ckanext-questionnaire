@@ -14,17 +14,39 @@ questionnaire = Blueprint('questionnaire', __name__)
 
 
 
-def get_question():
+def get_question_type():
     types = [{'text': 'Text',
             'value': 'text' },
             {'text': 'Select One',
             'value': 'select_one' },
-            {'text': 'Select One',
+            {'text': 'Select Many',
             'value': 'select_many' },
             ]
-    name='Question type'
+    name='question-type'
+    label='Question type'
+    id='field-question-type'
 
-    return dict(types=types, name=name)
+    return dict(types=types, name=name, label=label, id=id)
+
+def get_question_require():
+    types = [{'text': 'Yes',
+            'value': True },
+            {'text': 'No',
+            'value': False },
+            ]
+    name='question-requred'
+    label='Question required'
+    id='field-question-required'
+
+    return dict(types=types, name=name, label=label, id=id)
+
+def get_question_text():
+
+    name='question-text'
+    label='Question text'
+    id='field-question-text'
+
+    return dict(name=name, label=label, id=id)
 
 
 class CreateQuestionView(MethodView):
@@ -32,33 +54,31 @@ class CreateQuestionView(MethodView):
     
 
     def get(self):
-        items = get_question()
+        
+        items = get_question_type()
+        items2 = get_question_require()
+        items3 = get_question_text()
         data={}
-        vars = dict(data=data, errors={}, **items)
+        vars_type = dict(data=data, errors={}, **items)
+        vars_qrequired= dict(data=data, errors={}, **items2)
+        vars_qtext= dict(data=data, errors={}, **items3)
+        
 
-        return render_template("add_questions.html", extra_vars=vars )
+        return render_template("add_questions.html", extra_vars=vars_type,  vars_qrequired=vars_qrequired, vars_qtext=vars_qtext)
 
     def post(self):
 
         question = Question()
         
-        question.question_text = toolkit.request.form.get("add-question")
-        question.question_type = toolkit.request.form.get("question_type")
-        mandatory=toolkit.request.form.get("mandatory")
-        if mandatory=="Yes":
-            question.mandatory = True
-        else:
-            question.mandatory = False
+        question.question_text = toolkit.request.form.get("question-text")
+        question.question_type = toolkit.request.form.get("question-type")
+        question.mandatory=toolkit.request.form.get.value('question-required')
         question.created = str(datetime.now())
         model.Session.add(question)
         model.Session.commit()
-        
-        #answer_option=Answer_option()
+   
         session['question_id'] = question.id
-        #answer_option.question_id = session['question_id']
-        #answer_option.answer_text= toolkit.request.form.get("add-answer-option")
-        #model.Session.add(answer_option)
-        #model.Session.commit()
+      
         
         return toolkit.redirect_to(toolkit.url_for("questionnaire.add_question_option"))
 
