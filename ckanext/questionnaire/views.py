@@ -1,4 +1,4 @@
-from flask import Blueprint, session, render_template
+from flask import Blueprint, session, render_template, request, jsonify
 from flask.views import MethodView
 from ckan.common import g
 import ckan.model as model
@@ -78,7 +78,6 @@ class AnswersView(MethodView):
 
         q_list = model.Session.query(Question).all()
         q_option_list = model.Session.query(QuestionOption).all()
-        x=get_question_select_one()
         context={
             'q_list' : q_list,
             'q_option_list' : q_option_list,
@@ -88,35 +87,35 @@ class AnswersView(MethodView):
 
     def post(self):
         
-        form_data = toolkit.request.form.to_dict()
-        #prepare data for checkpoint answers save
-        final_data = preprare_list(**form_data)
-        final_data = q_text(*final_data)
+        form_data = toolkit.request.form
+        formdata = request.values
 
-        if model.Session.query(Answer).filter( Answer.user_name == g.userobj.name).count() == 0 :
+        if model.Session.query(Answer).filter( Answer.user_id == g.userobj.id).count() == 0 :
 
             # Save the answers to database
-            for x in final_data:
+            for key, value in form_data.items(multi=True):
                 answer=Answer()
-                answer.user_name = g.userobj.name
+                answer.user_id = g.userobj.id
                 answer.date_answered = str(datetime.now())
-                answer.question_text = x[0]
-                answer.answer_text = x[1]
+                answer.question_id = key
+                answer.answer_text = value
                 model.Session.add(answer)
                 model.Session.commit()
+
+            
                 
         else:
             #delete previous answers
-            model.Session.query(Answer).filter(Answer.user_name == g.userobj.name).delete()
+            model.Session.query(Answer).filter(Answer.user_id == g.userobj.id).delete()
             model.Session.commit()
             
             # Save the answers to database
-            for x in final_data:
+            for key, value in form_data.items(multi=True):
                 answer=Answer()
-                answer.user_name = g.userobj.name
+                answer.user_id = g.userobj.name
                 answer.date_answered = str(datetime.now())
-                answer.question_text = x [0]
-                answer.answer_text = x[1]
+                answer.question_id = key
+                answer.answer_text = value
                 model.Session.add(answer)
                 model.Session.commit()
 
