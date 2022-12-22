@@ -15,9 +15,39 @@
   <h2 style="margin-top:-1em;">Please answer the following questions</h2>
 
   <form id="answers_add_form" method="POST">
-  
 
-    <button type='submit', class ='btn btn-primary', icon='plus-square' href="{{ h.url_for('questionnaire.answers') }}">{{_('Submit')}}</button>
+{% for question in q_list %}
+  {% if question.question_type=="text" %}
+    {{ form.input(question.question_text, label=question.question_text, value="") }}
+  {% endif %}
+
+
+  {% if question.question_type=="select_one" %}
+    <label class="control-label" id="{{ question.id }}" name="{{ question.question_text }}">{{ question.question_text }}</label>
+    <select id="question.id" class="form-control" name="{{ question.question_text }}">
+    {%for q_option in q_option_list %}
+      {% if question.id == q_option.question_id %}
+        <option value="{{ q_option.answer_text }}">{{q_option.answer_text}}</option>
+      {% endif %}
+    {% endfor %}
+    </select>
+    <p style="margin-top:2em;"></p>
+   {% endif %}
+
+
+   {% if question.question_type=="select_many" %}
+    <label class="control-label" id="{{ question.id }}" name="{{ question.question_text }}">{{ question.question_text }}</label></br>
+      {% for q_option in q_option_list %}     
+        {% if question.id == q_option.question_id %}
+        <input type="checkbox" id='{{ q_option.id }}' name="{{ q_option.answer_text }}" value="{{ q_option.answer_text }}">
+        <label for="{{ q_option.id }}">{{q_option.answer_text}}</label><br>
+        {% endif %}      
+      {% endfor %}
+    <p style="margin-top:2em;"></p>
+    {% endif %}
+
+{% endfor %}
+    <button type='submit', value='submit' class ='btn btn-primary', icon='plus-square' href="{{ h.url_for('questionnaire.answers') }}">{{_('Submit')}}</button>
   </div>
 </form>
 

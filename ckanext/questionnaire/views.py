@@ -5,59 +5,11 @@ import ckan.model as model
 import ckan.plugins.toolkit as toolkit
 from ckanext.questionnaire.model import Question, QuestionOption, Answer
 from ckanext.questionnaire.answers_blueprint import download_answers
-from ckanext.questionnaire.helpers import preprare_list, q_text
+from ckanext.questionnaire.helpers import *
 from datetime import datetime
 
 
 questionnaire = Blueprint('questionnaire', __name__)
-
-
-
-
-def get_question_type():
-    types = [{'text': 'Text',
-            'value': 'text' },
-            {'text': 'Select One',
-            'value': 'select_one' },
-            {'text': 'Select Many',
-            'value': 'select_many' },
-            ]
-    name='question-type'
-    label='Question type'
-    id='field-question-type'
-
-    return dict(types=types, name=name, label=label, id=id)
-
-def get_question_require():
-    types = [{'text': 'Yes',
-            'value': True },
-            {'text': 'No',
-            'value': False },
-            ]
-    name='question-requred'
-    label='Question required'
-    id='field-question-required'
-
-    return dict(types=types, name=name, label=label, id=id)
-
-def get_question_text():
-
-    name='question-text'
-    label='Question text'
-    id='field-question-text'
-
-    return dict(name=name, label=label, id=id)
-
-def get_question_option():
-
-    name='question-option'
-    label='Question option'
-    id='field-question-option'
-
-    return dict(name=name, label=label, id=id)
-
-
-
 
 
 class CreateQuestionView(MethodView):
@@ -72,9 +24,12 @@ class CreateQuestionView(MethodView):
         vars_type = dict(data=data, errors={}, **qtype)
         vars_qrequired= dict(data=data, errors={}, **qrequire)
         vars_qtext= dict(data=data, errors={}, **qtext)
-        
-
-        return render_template("add_questions.html", extra_vars=vars_type,  vars_qrequired=vars_qrequired, vars_qtext=vars_qtext)
+        context={
+            'vars_type' : vars_type,
+            'vars_qrequired' : vars_qrequired,
+            'vars_qtext' :vars_qtext
+        }
+        return render_template("add_questions.html", **context)
 
     def post(self):
 
@@ -123,12 +78,13 @@ class AnswersView(MethodView):
 
         q_list = model.Session.query(Question).all()
         q_option_list = model.Session.query(QuestionOption).all()
-        content={
+        x=get_question_select_one()
+        context={
             'q_list' : q_list,
             'q_option_list' : q_option_list,
-        }
-
-        return render_template("answers.html", content=content)
+            }
+         
+        return render_template("answers.html", **context)
 
     def post(self):
         
@@ -172,10 +128,10 @@ class DeleteQuestionView(MethodView):
     def get(self):
         q_list = model.Session.query(Question).all()
 
-        content={
+        context={
             'q_list' : q_list
         }
-        return render_template("delete_questions.html", **content)
+        return render_template("delete_questions.html", **context)
 
     def post(self):
         
