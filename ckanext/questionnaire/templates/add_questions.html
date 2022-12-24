@@ -12,15 +12,17 @@
 
 {% block primary %}
 <form id="question_add_form" method="post">
-  
+  <div class="input_fields_wrap">
     {{ form.select(vars_type.name, id=vars_type.id, label=vars_type.label, options=vars_type.types ) }}
     {{ form.select(vars_qrequired.name, id=vars_qrequired.id, label=vars_qrequired.label, options=vars_qrequired.types ) }}
     {{ form.input(vars_qtext.name, label=vars_qtext.label, value="") }}
 
-      <button type='submit', class ='btn btn-primary', icon='plus-square' href="{{ h.url_for('questionnaire.add_questions') }}">{{_('Add Question')}}</button>
+    <div class="hidden" style="display: flex;">
+      <input class="form-control" id="{{vars_option.name}}", name="{{vars_option.name}}" label="{{vars_option.name}}" value="">
+      <button icon='plus-square' class="btn btn-secondary add_field_button">+</i></button>
     </div>
+    </div>
+    <button type='submit', class ='btn btn-primary', icon='plus-square' href="{{ h.url_for('questionnaire.add_questions') }}">{{_('Add Question')}}</button>
   </form>
   
 {% endblock %}
-
-

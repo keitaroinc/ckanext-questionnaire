@@ -1,4 +1,3 @@
-import model
 from ckan.model.meta import metadata, mapper, Session
 from ckan.model.domain_object import DomainObject
 from ckan.model.types import make_uuid
@@ -48,6 +47,12 @@ class Question(DomainObject):
     def get_all(cls):
         return Session.query(cls).all()
 
+    @classmethod
+    def get(cls, question_id):
+        query = Session.query(cls).autoflush(False)
+        query = query.filter(cls.id == question_id)
+        return query.first()
+
 
 class QuestionOption(DomainObject):
 
@@ -59,6 +64,12 @@ class Answer(DomainObject):
     def __init__(self, **kwargs):
         self.id=make_uuid()
         self.user_id=g.userobj.id
+
+    @classmethod
+    def get(cls, user_reference):
+        query = Session.query(cls).autoflush(False)
+        query = query.filter(cls.user_id == user_reference)
+        return query.all()
 
 
 mapper(Question, question_table, properties={})

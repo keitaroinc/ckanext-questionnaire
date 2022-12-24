@@ -1,8 +1,8 @@
-from ckanext.questionnaire.model import Question, QuestionOption
 import ckan.model as model
-from ckan.lib import base
-import sqlalchemy as db
 
+from ckan.common import g
+
+from ckanext.questionnaire.model import Answer, Question
 
 
 def get_question_type():
@@ -19,6 +19,7 @@ def get_question_type():
 
     return dict(types=types, name=name, label=label, id=id)
 
+
 def get_question_require():
     types = [{'text': 'Yes',
             'value': True },
@@ -31,6 +32,7 @@ def get_question_require():
 
     return dict(types=types, name=name, label=label, id=id)
 
+
 def get_question_text():
 
     name='question-text'
@@ -39,6 +41,7 @@ def get_question_text():
 
     return dict(name=name, label=label, id=id)
 
+
 def get_question_option():
 
     name='question-option'
@@ -46,3 +49,23 @@ def get_question_option():
     id='field-question-option'
 
     return dict(name=name, label=label, id=id)
+
+
+def check_and_delete_answered(q_list):
+
+    answered = Answer.get(g.userobj.id)
+    for idx, question in enumerate(q_list):
+        for answ in answered:
+            if question.id == answ.question_id:
+                del q_list[idx]
+    return q_list
+
+
+def _validate(data):
+
+    for key, value in data.items():
+        question = model.Session.query(Question).get(key)
+        if question.mandatory and not value:
+            return data, {'Missing value': question.question_text}
+
+    return data, {}
