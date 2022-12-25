@@ -88,16 +88,17 @@ class AnswersView(MethodView):
     def post(self):
         
         form_data = toolkit.request.form
-        formdata = request.values
+        #formdata = request.values
 
-        if model.Session.query(Answer).filter( Answer.user_id == g.userobj.id).count() == 0 :
+        if model.Session.query(Answer).filter( Answer.user == g.userobj.name).count() == 0 :
 
             # Save the answers to database
             for key, value in form_data.items(multi=True):
                 answer=Answer()
-                answer.user_id = g.userobj.id
+                answer.user = g.userobj.name
                 answer.date_answered = str(datetime.now())
                 answer.question_id = key
+                answer.question_text = model.Session.query(Question).filter( Question.id == key).first().question_text
                 answer.answer_text = value
                 model.Session.add(answer)
                 model.Session.commit()
@@ -106,15 +107,16 @@ class AnswersView(MethodView):
                 
         else:
             #delete previous answers
-            model.Session.query(Answer).filter(Answer.user_id == g.userobj.id).delete()
+            model.Session.query(Answer).filter(Answer.user == g.userobj.name).delete()
             model.Session.commit()
             
             # Save the answers to database
             for key, value in form_data.items(multi=True):
                 answer=Answer()
-                answer.user_id = g.userobj.name
+                answer.user = g.userobj.name
                 answer.date_answered = str(datetime.now())
                 answer.question_id = key
+                answer.question_text = model.Session.query(Question).filter( Question.id == key).first().question_text
                 answer.answer_text = value
                 model.Session.add(answer)
                 model.Session.commit()

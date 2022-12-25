@@ -32,8 +32,9 @@ question_option_table = Table('question_option',metadata,
 
 answer_table = Table('answer',metadata,
     Column('id', types.UnicodeText, primary_key=True, default=make_uuid),
-    Column('question_id', ForeignKey('question.id')),
-    Column('user_id', types.UnicodeText, default=u'{}'),
+    Column('question_id', types.UnicodeText, default=u'{}'),
+    Column('question_text', types.UnicodeText, default=u'{}'),
+    Column('user', types.UnicodeText, default=u'{}'),
     Column('answer_text', types.UnicodeText, default=u'{}'),
     Column('date_answered', types.DateTime, default=datetime.datetime.utcnow),
     )
@@ -63,7 +64,7 @@ class Answer(DomainObject):
 
 mapper(Question, question_table, properties={})
 mapper(QuestionOption, question_option_table, properties={'question': relationship (Question)})
-mapper(Answer, answer_table, properties={'question': relationship (Question)})
+mapper(Answer, answer_table, properties={})
 
 
 

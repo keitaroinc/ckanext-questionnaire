@@ -16,7 +16,7 @@ def download_answers():
         y=str(Path().absolute())
         answer_db = model.Session.query(Answer).all()
         def answer_to_tuple(answer):
-            return (answer.user_name, answer.question_text, answer.answer_text, answer.date_answered)
+            return (answer.user, answer.question_text, answer.answer_text, answer.date_answered)
         
         with open("answers.csv", "w") as stream:
             writer = csv.writer(stream)
@@ -34,4 +34,11 @@ def download_answers():
         return Response("Page Not Found", status=400,)
 
     return send_file( y + '/answers.csv', mimetype='text/csv' , as_attachment=True)
+
+
+###################################
+# Combined user profile + answers #
+###################################
+
+
 
