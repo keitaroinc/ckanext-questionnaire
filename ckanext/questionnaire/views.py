@@ -134,28 +134,13 @@ class AnswersView(MethodView):
         
         return toolkit.redirect_to(toolkit.url_for("dashboard.index"))
 
-class DeleteQuestionView(MethodView):
 
-    def get(self):
-        q_list = model.Session.query(Question).all()
+class EditQuestionView(MethodView):
+    def get(self, question_id):
+        pass
 
-        context={
-            'q_list' : q_list
-        }
-        return render_template("delete_questions.html", **context)
-
-    def post(self):
-        
-        qid=toolkit.request.form.get('qid')
-        try:
-            model.Session.query(QuestionOption).filter(QuestionOption.question_id == qid).delete()
-            model.Session.commit()
-            model.Session.query(Question).filter(Question.id == qid).delete()
-            model.Session.commit()
-        except Exception as e:
-            pass
-
-        return toolkit.redirect_to(toolkit.url_for("questionnaire.delete_questions"))
+    def post(self, question_id):
+        pass
 
 
 def has_unanswered_questions(answered):
@@ -186,12 +171,30 @@ def custom_login():
     return toolkit.redirect_to('user.login')
 
 
+def read():
+    q_list = model.Session.query(Question).all()
+    extra_vars = {"q_list" : q_list}
+    return toolkit.base.render("question_read.html", extra_vars)
+
+
+def delete(question_id):
+    if question_id:
+        model.Session.query(QuestionOption).filter(QuestionOption.question_id == question_id).delete()
+        model.Session.query(Answer).filter(Answer.question_id == question_id).delete()
+        model.Session.commit()
+        model.Session.query(Question).filter(Question.id == question_id).delete()
+        model.Session.commit()
+        return toolkit.redirect_to("questionnaire.read")
+
+
 questionnaire.add_url_rule(
     '/add_questions', view_func=CreateQuestionView.as_view(str("add_questions")))
 questionnaire.add_url_rule('/login', view_func=custom_login, methods=('GET', 'POST'))
+questionnaire.add_url_rule('/questions', view_func=read, methods=('GET', 'POST'))
+questionnaire.add_url_rule('/<question_id>/delete', view_func=delete, methods=("POST",))
 questionnaire.add_url_rule(
     '/answers', view_func=AnswersView.as_view(str("answers")))
 questionnaire.add_url_rule(
-    '/download_answers', view_func=download_answers)
+    '/<question_id>/edit', view_func=EditQuestionView.as_view(str("edit")))
 questionnaire.add_url_rule(
-    '/delete_questions/', view_func=DeleteQuestionView.as_view(str("delete_questions")))
+    '/download_answers', view_func=download_answers)

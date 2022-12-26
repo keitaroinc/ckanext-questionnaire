@@ -1,0 +1,46 @@
+{% extends "page.html" %}
+
+{% block subtitle %}{{ _('Questions') }}{% endblock %}
+
+{% block breadcrumb_content %}
+<li class="active">{% link_for _('Add Questions'), named_route='questionnaire.add_questions' %}</li>
+<li class="active">{% link_for _('Questions'), named_route='questionnaire.read' %}</li>
+{% endblock %}
+
+{% block secondary%}
+{% endblock %}
+
+{% block primary %}
+
+    
+<div class="table-responsive">
+    <h2 class="fs-2 text"> {{ _("All Questions") }} </h2>
+    <table class="table table-hover table-condensed">
+        <thead>
+            <tr>
+                <th>{{ _("Name") }}</th>
+                <th>{{ _("Type") }}</th>
+                <th>{{ _("Created") }}</th>
+                <th>{{ _("Edit") }}</th>
+                <th>{{ _("Delete") }}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for question in q_list %}
+            <tr>
+                <td>{{ question.question_text }}</td>
+                <td>{{ question.question_type }}</td>
+                <td>{{ question.created }}</td>
+                {#<form method="post"> #}
+                    <td><a href="{{ h.url_for('questionnaire.edit', question_id=question.id) }}"><i class="fa fa-edit"></a></i></td>
+                    <td><a href="{{ h.url_for('questionnaire.delete', question_id=question.id) }}" data-module="confirm-action" data-module-content="{{ _('Are you sure you want to delete this Question?') }}"><i class="fa fa-trash"></i></a></td>
+                    {# <td><button class="btn btn-danger" type="submit" name="question_delete" value="{{ question.id }}"><i class="fa fa-trash"></i></button></td> #}
+                {# </form> #}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+    
+   
+{% endblock %}
