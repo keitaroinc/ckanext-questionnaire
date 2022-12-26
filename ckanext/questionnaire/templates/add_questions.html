@@ -5,6 +5,7 @@
 
   {% block breadcrumb_content %}
   <li class="active">{% link_for _('Add Questions'), named_route='questionnaire.add_questions' %}</li>
+  <li class="active">{% link_for _('All Questions'), named_route='questionnaire.read' %}</li>
   {% endblock %}
 
   {% block secondary%}

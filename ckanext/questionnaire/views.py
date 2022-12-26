@@ -178,7 +178,8 @@ def read():
 
 
 def delete(question_id):
-    if question_id:
+
+    if toolkit.request.method == "POST":
         model.Session.query(QuestionOption).filter(QuestionOption.question_id == question_id).delete()
         model.Session.query(Answer).filter(Answer.question_id == question_id).delete()
         model.Session.commit()
@@ -186,12 +187,13 @@ def delete(question_id):
         model.Session.commit()
         return toolkit.redirect_to("questionnaire.read")
 
+    return toolkit.render("question_delete.html", extra_vars={"question_id": question_id})
 
 questionnaire.add_url_rule(
     '/add_questions', view_func=CreateQuestionView.as_view(str("add_questions")))
 questionnaire.add_url_rule('/login', view_func=custom_login, methods=('GET', 'POST'))
 questionnaire.add_url_rule('/questions', view_func=read, methods=('GET', 'POST'))
-questionnaire.add_url_rule('/<question_id>/delete', view_func=delete, methods=("POST",))
+questionnaire.add_url_rule('/<question_id>/delete', view_func=delete, methods=('GET', 'POST'))
 questionnaire.add_url_rule(
     '/answers', view_func=AnswersView.as_view(str("answers")))
 questionnaire.add_url_rule(

@@ -31,16 +31,13 @@
                 <td>{{ question.question_text }}</td>
                 <td>{{ question.question_type }}</td>
                 <td>{{ question.created }}</td>
-                {#<form method="post"> #}
-                    <td><a href="{{ h.url_for('questionnaire.edit', question_id=question.id) }}"><i class="fa fa-edit"></a></i></td>
-                    <td><a href="{{ h.url_for('questionnaire.delete', question_id=question.id) }}" data-module="confirm-action" data-module-content="{{ _('Are you sure you want to delete this Question?') }}"><i class="fa fa-trash"></i></a></td>
-                    {# <td><button class="btn btn-danger" type="submit" name="question_delete" value="{{ question.id }}"><i class="fa fa-trash"></i></button></td> #}
-                {# </form> #}
+                <td><a class="btn btn-primary" href="{{ h.url_for('questionnaire.edit', question_id=question.id) }}"><i class="fa fa-edit"></a></i></td>
+                <form id='confirm-question-delete-form' method="post">
+                    <td><a class="btn btn-danger" href="{{ h.url_for('questionnaire.delete', question_id=question.id) }}" data-module="confirm-action" data-module-content="{{ _('Are you sure you want to delete this Question?') }}"><i class="fa fa-trash"></i></a></td>
+                </form>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 </div>
-    
-   
 {% endblock %}
