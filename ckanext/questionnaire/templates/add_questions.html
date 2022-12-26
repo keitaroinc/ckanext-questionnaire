@@ -1,6 +1,6 @@
 {% extends "page.html" %}
 {% import 'macros/form.html' as form %}
-  
+
   {% block subtitle %}{{ _('Add Questions') }}{% endblock %}
 
   {% block breadcrumb_content %}
@@ -15,14 +15,17 @@
   <div class="input_fields_wrap">
     {{ form.select(vars_type.name, id=vars_type.id, label=vars_type.label, options=vars_type.types ) }}
     {{ form.select(vars_qrequired.name, id=vars_qrequired.id, label=vars_qrequired.label, options=vars_qrequired.types ) }}
-    {{ form.input(vars_qtext.name, label=vars_qtext.label, value="") }}
+    {{ form.input(vars_qtext.name, label=vars_qtext.label, value="", error=error) }}
+    {{ form.input(vars_option.name,  label=vars_option.label, value="", error=error, classes=["hidden"]) }}
 
-    <div class="hidden" style="display: flex;">
-      <input class="form-control" id="{{vars_option.name}}", name="{{vars_option.name}}" label="{{vars_option.name}}" value="">
-      <button icon='plus-square' class="btn btn-secondary add_field_button">+</i></button>
+    {#<div class="form-group" style="display: flex;">
+      <input class="form-control hidden" name="{{vars_option.name}}", id="{{vars_option.id}}",  value="">
+    </div> #}
     </div>
+    <div style="display:flex; gap:10px">
+      <button icon='plus-square' class="btn btn-primary add_field_button hidden">{{ _("Add question option") }}</i></button>
+      <button type='submit', class ='btn btn-primary', icon='plus-square' href="{{ h.url_for('questionnaire.add_questions') }}">{{_('Add Question')}}</button>
     </div>
-    <button type='submit', class ='btn btn-primary', icon='plus-square' href="{{ h.url_for('questionnaire.add_questions') }}">{{_('Add Question')}}</button>
   </form>
-  
+
 {% endblock %}

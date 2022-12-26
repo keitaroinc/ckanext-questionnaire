@@ -4,6 +4,7 @@ import ckan.plugins.toolkit as toolkit
 from ckan.views.user import _get_repoze_handler
 
 import ckanext.questionnaire.cli as cli
+import ckanext.questionnaire.actions as actions
 
 from ckanext.questionnaire.views import questionnaire
 
@@ -14,6 +15,7 @@ class QuestionnairePlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IBlueprint)
     plugins.implements(plugins.IClick)
     plugins.implements(plugins.IAuthenticator)
+    plugins.implements(plugins.IActions)
 
     # IAuthenticator
 
@@ -45,12 +47,23 @@ class QuestionnairePlugin(plugins.SingletonPlugin):
         toolkit.add_public_directory(config_, 'public')
         toolkit.add_resource('assets', 'questionnaire')
 
+    # IAction
+
+    def get_actions(self):
+        return {"question_create": actions.question_create}
+
+    # ITemplateHelpers
+
     def get_helpers(self):
         return {
         }
 
+    # IBlueprint
+
     def get_blueprint(self):
         return questionnaire
+
+    # IClick
 
     def get_commands(self):
         return cli.get_commands()

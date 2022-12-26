@@ -31,7 +31,7 @@ not_found_message = (
 
 class CreateQuestionView(MethodView):
 
-    def get(self):
+    def get(self, errors=None):
 
         if not g.user or g.user and not g.userobj.sysadmin:
             return toolkit.abort(404, toolkit._(not_found_message))
@@ -48,36 +48,27 @@ class CreateQuestionView(MethodView):
         vars_qrequired= dict(data=data, errors={}, **qrequire)
         vars_qtext= dict(data=data, errors={}, **qtext)
 
-        context={
+        extra_vars = { 
             'vars_type': vars_type,
             'vars_qrequired': vars_qrequired,
             'vars_qtext': vars_qtext,
-            'vars_option': vars_option
+            'vars_option': vars_option,
+            'error': errors
         }
-        return render_template("add_questions.html", **context)
+        return toolkit.base.render("add_questions.html", extra_vars)
 
     def post(self):
 
-        session = model.Session
-        question = Question()
+        context = {}
         data = clean_dict(
             dict_fns.unflatten(tuplize_dict(parse_params(toolkit.request.form)))
         )
-        question.question_text = data.get("question-text")
-        question.question_type = data.get("question-type")
-        question.mandatory = data.get('question-required')
 
-        session.add(question)
-        if not data.get('question-option'):
-            session.commit()
-
-        for option in data.get('question-option'):
-            question_option = QuestionOption()
-            question_option.question_id = question.id
-            question_option.answer_text = option
-
-            session.add(question_option)
-            session.commit()
+        try:
+            toolkit.get_action("question_create")(context, data)
+        except ValidationError as e:
+            errors = e.error_dict
+            return self.get([errors.get('message')])
 
         return toolkit.redirect_to(toolkit.url_for("dashboard.datasets"))
 
@@ -116,7 +107,7 @@ class AnswersView(MethodView):
         if model.Session.query(Answer).filter( Answer.user_id == g.userobj.id).count() == 0 :
 
             # Save the answers to database
-            for key, value in form_data.items(multi=True):
+            for key, value in data.items():
                 answer=Answer()
                 answer.user_id = g.userobj.id
                 answer.date_answered = str(datetime.now())
@@ -176,6 +167,10 @@ def has_unanswered_questions(answered):
 
 def custom_login():
 
+    route_after_login = toolkit.config.get('ckan.route_after_login')
+    if g.user and g.userobj.sysadmin:
+        return toolkit.redirect_to(route_after_login)
+
     if g.user and g.userobj:
         answered = Answer.get(g.userobj.id)
         if not answered:
@@ -184,7 +179,6 @@ def custom_login():
         if has_unanswered_questions(answered):
             return toolkit.redirect_to("questionnaire.answers")
 
-        route_after_login = toolkit.config.get('ckan.route_after_login')
         return toolkit.redirect_to(route_after_login)
 
     err = toolkit._(u'Login failed. Bad username or password.')
