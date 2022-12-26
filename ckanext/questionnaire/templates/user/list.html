@@ -3,7 +3,8 @@
 {% block users_list %}
     <p id="profile_download">
     {% if h.check_access('sysadmin') %}
-        {% link_for _('Download Survey Answers'), named_route='questionnaire.download_answers', class_='btn btn-primary', icon='plus-square' %}
+        {% link_for _('Download  Answers'), named_route='questionnaire.download_answers', class_='btn btn-primary', icon='plus-square' %}
+        {% link_for _('Download User Answers'), named_route='questionnaire.download_user_answers', class_='btn btn-primary', icon='plus-square' %}
     {% endif %}
     </p>
     {{ super() }}

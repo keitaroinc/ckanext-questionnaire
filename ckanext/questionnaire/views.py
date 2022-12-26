@@ -4,7 +4,7 @@ from ckan.common import g
 import ckan.model as model
 import ckan.plugins.toolkit as toolkit
 from ckanext.questionnaire.model import Question, QuestionOption, Answer
-from ckanext.questionnaire.answers_blueprint import download_answers
+from ckanext.questionnaire.answers_blueprint import download_answers, download_user_answers
 from ckanext.questionnaire.helpers import *
 from datetime import datetime
 
@@ -98,6 +98,7 @@ class AnswersView(MethodView):
                 answer.user = g.userobj.name
                 answer.date_answered = str(datetime.now())
                 answer.question_id = key
+
                 answer.question_text = model.Session.query(Question).filter( Question.id == key).first().question_text
                 answer.answer_text = value
                 model.Session.add(answer)
@@ -158,6 +159,8 @@ questionnaire.add_url_rule(
     '/answers', view_func=AnswersView.as_view(str("answers")))
 questionnaire.add_url_rule(
     '/download_answers', view_func=download_answers)
+questionnaire.add_url_rule(
+    '/download_user_answers', view_func=download_user_answers)
 questionnaire.add_url_rule(
     '/delete_questions/', view_func=DeleteQuestionView.as_view(str("delete_questions")))
 

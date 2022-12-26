@@ -1,10 +1,11 @@
 import ckan.lib.helpers as h
 import flask, requests, os
+import pandas as pd
 import csv
 import ckan.model as model
 from flask import send_file, Response, Blueprint
 from ckan.common import g
-from ckanext.questionnaire.model import  Answer
+from ckanext.questionnaire.model import  Answer, Question
 import ckan.plugins.toolkit as toolkit
 from pathlib import Path
 from flask import after_this_request
@@ -39,6 +40,29 @@ def download_answers():
 ###################################
 # Combined user profile + answers #
 ###################################
+def download_user_answers():
 
+    y=str(Path().absolute())
+    users_list = toolkit.get_action('user_list')({},{})
+    df = pd.DataFrame()
 
+    q_list = model.Session.query(Question).all()
+    columns=['username', 'fullname', 'email']
+    for col in q_list:
+        #columns.append(col.id)
+        columns.append(col.question_text)
+
+    df = pd.concat([df, pd.DataFrame([columns])])
+    
+  
+    for r in users_list:
+       
+        insert_row = (r['name'], r['fullname'], r['email'])
+        df = pd.concat([df, pd.DataFrame([insert_row])])
+    
+    
+    
+    df.to_csv('profiles.csv', sep='\t')
+
+    return send_file( y + '/profiles.csv', mimetype='text/csv' , as_attachment=True)
 
