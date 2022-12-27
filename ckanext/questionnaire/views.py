@@ -182,9 +182,6 @@ def custom_login():
         if not answered or ckanext_helpers.has_unanswered_questions(answered):
             return toolkit.redirect_to("questionnaire.answers")
 
-        # if has_unanswered_questions(answered):
-        #     return toolkit.redirect_to("questionnaire.answers")
-
         return toolkit.redirect_to(route_after_login)
 
     err = toolkit._(u'Login failed. Bad username or password.')
@@ -201,7 +198,7 @@ def question_list():
         }
 
     try:
-        toolkit.check_access(u'question_edit', context)
+        toolkit.check_access(u'question_list', context)
     except:
         return toolkit.abort(404, toolkit._(not_found_message))
 

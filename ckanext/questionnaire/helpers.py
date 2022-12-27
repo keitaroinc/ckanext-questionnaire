@@ -1,5 +1,7 @@
 import ckan.model as model
 
+from operator import itemgetter
+
 from ckan.common import g
 
 from ckanext.questionnaire.model import Answer, Question
@@ -52,13 +54,14 @@ def get_question_option():
 
 
 def check_and_delete_answered(q_list):
-    breakpoint()
     answered = Answer.get(g.userobj.id)
-    for idx, question in enumerate(q_list):
-        for answ in answered:
-            if question.id == answ.question_id:
-                del q_list[idx]
-    return q_list
+    sorted_answ = sorted(answered, key=lambda answ: answ.question_id, reverse=True)
+    sorted_q_list = sorted(q_list, key=lambda question: question.id, reverse=True)
+
+    for question, answers in zip(q_list, sorted_answ):
+        if question.id == answers.question_id:
+            del sorted_q_list[0]
+    return sorted_q_list
 
 
 def _validate(data):
