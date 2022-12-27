@@ -55,11 +55,15 @@ def check_and_delete_answered(q_list):
     answered = Answer.get(g.userobj.id)
     sorted_answ = sorted(answered, key=lambda answ: answ.question_id, reverse=True)
     sorted_q_list = sorted(q_list, key=lambda question: question.id, reverse=True)
+    q_list = []
 
-    for question, answers in zip(q_list, sorted_answ):
+    for question, answers in zip(sorted_q_list, sorted_answ):
         if question.id == answers.question_id:
-            del sorted_q_list[0]
-    return sorted_q_list
+            continue
+        else:
+            q_list.append(question)
+
+    return q_list
 
 
 def _validate(data):

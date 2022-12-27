@@ -48,32 +48,14 @@ def answer_create(context, data):
         session.rollback()
         raise ValidationError('Missing value')
 
-    if model.Session.query(Answer).filter( Answer.user_id == userobj.id).count() == 0:
-
-            # Save the answers to database
-            for key, value in data.items():
-                answer=Answer()
-                answer.user_id = userobj.id
-                answer.date_answered = str(datetime.datetime.now())
-                answer.question_id = key
-                answer.answer_text = value
-                model.Session.add(answer)
-                model.Session.commit()
-
-    else:
-        #delete previous answers
-        model.Session.query(Answer).filter(Answer.user_id == userobj.id).delete()
+    for key, value in data.items():
+        answer=Answer()
+        answer.user_id = userobj.id
+        answer.date_answered = str(datetime.datetime.now())
+        answer.question_id = key
+        answer.answer_text = value
+        model.Session.add(answer)
         model.Session.commit()
-        
-        # Save the answers to database
-        for key, value in data.items():
-            answer=Answer()
-            answer.user_id = userobj.name
-            answer.date_answered = str(datetime.datetime.now())
-            answer.question_id = key
-            answer.answer_text = value
-            model.Session.add(answer)
-            model.Session.commit()
 
 
 def question_update(context, data_dict):
