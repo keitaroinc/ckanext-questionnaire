@@ -1,16 +1,18 @@
+import logging 
+import datetime
+
+from sqlalchemy import types, Table, Column, MetaData, ForeignKey
+from sqlalchemy.orm import relationship
+
+import ckan.model as model
+
+from ckan.common import g
 from ckan.model.meta import metadata, mapper, Session
 from ckan.model.domain_object import DomainObject
 from ckan.model.types import make_uuid
-from ckan import model
-from flask import g
-from sqlalchemy import types, Table, Column, MetaData, ForeignKey
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
-import logging, datetime
 
 
 log = logging.getLogger(__name__)
-
 
 metadata = MetaData()
 
@@ -75,7 +77,6 @@ class Answer(DomainObject):
 mapper(Question, question_table, properties={})
 mapper(QuestionOption, question_option_table, properties={'question': relationship (Question)})
 mapper(Answer, answer_table, properties={'question': relationship (Question)})
-
 
 
 def init_tables(self):

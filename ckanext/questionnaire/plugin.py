@@ -5,6 +5,7 @@ from ckan.views.user import _get_repoze_handler
 
 import ckanext.questionnaire.cli as cli
 import ckanext.questionnaire.actions as actions
+import ckanext.questionnaire.auth as auth
 
 from ckanext.questionnaire.views import questionnaire
 
@@ -16,6 +17,7 @@ class QuestionnairePlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IClick)
     plugins.implements(plugins.IAuthenticator)
     plugins.implements(plugins.IActions)
+    plugins.implements(plugins.IAuthFunctions)
 
     # IAuthenticator
 
@@ -50,13 +52,26 @@ class QuestionnairePlugin(plugins.SingletonPlugin):
     # IAction
 
     def get_actions(self):
-        return {"question_create": actions.question_create}
+        return {
+            "question_create": actions.question_create,
+            "answer_create": actions.answer_create,
+            "question_update": actions.question_update
+        }
+
+    # IAuthFunctions
+
+    def get_auth_functions(self):
+        return {
+            "answer_create": auth.answer_create,
+            "question_create": auth.question_create,
+            "question_edit": auth.question_edit,
+            "question_list": auth.question_list
+        }
 
     # ITemplateHelpers
 
     def get_helpers(self):
-        return {
-        }
+        return {}
 
     # IBlueprint
 

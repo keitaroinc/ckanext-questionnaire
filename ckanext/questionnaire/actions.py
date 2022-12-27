@@ -1,9 +1,14 @@
+import datetime
+
 import ckan.plugins.toolkit as toolkit
 
-from ckanext.questionnaire.model import Question, QuestionOption
+import ckanext.questionnaire.helpers as ckanext_helpers
+
+from ckanext.questionnaire.model import Question, QuestionOption, Answer
 
 
 ValidationError = toolkit.ValidationError
+asbool = toolkit.asbool
 
 
 def question_create(context, data):
@@ -28,5 +33,72 @@ def question_create(context, data):
         question_option.answer_text = option
 
         session.add(question_option)
+        session.commit()
+    return
+
+
+def answer_create(context, data):
+
+    session = context.get('session')
+    model = context.get('model')
+    userobj = context.get('auth_user_obj')
+
+    data, errors = ckanext_helpers._validate(data)
+    if errors:
+        session.rollback()
+        raise ValidationError('Missing value')
+
+    if model.Session.query(Answer).filter( Answer.user_id == userobj.id).count() == 0:
+
+            # Save the answers to database
+            for key, value in data.items():
+                answer=Answer()
+                answer.user_id = userobj.id
+                answer.date_answered = str(datetime.datetime.now())
+                answer.question_id = key
+                answer.answer_text = value
+                model.Session.add(answer)
+                model.Session.commit()
+
+    else:
+        #delete previous answers
+        model.Session.query(Answer).filter(Answer.user_id == userobj.id).delete()
+        model.Session.commit()
+        
+        # Save the answers to database
+        for key, value in data.items():
+            answer=Answer()
+            answer.user_id = userobj.name
+            answer.date_answered = str(datetime.datetime.now())
+            answer.question_id = key
+            answer.answer_text = value
+            model.Session.add(answer)
+            model.Session.commit()
+
+
+def question_update(context, data_dict):
+
+    model = context.get("model")
+    session = context.get("session")
+    for_update = False
+
+    question_id = data_dict.get("id")
+    question_text = data_dict.get("question-text")
+    question_type = data_dict.get("question-type")
+
+    question = model.Session.query(Question).get(question_id)
+    if not question:
+        raise toolkit.ObjectNotFound('Question Not Found')
+
+    if question_text and question_text not in question.question_text:
+        question.question_text = question_text
+        for_update = True
+
+    if question_type and asbool(question_type) != question.mandatory:
+        question.mandatory = asbool(question_type)
+        for_update = True
+
+    if for_update:
+        session.add(question)
         session.commit()
     return

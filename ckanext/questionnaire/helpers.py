@@ -52,7 +52,7 @@ def get_question_option():
 
 
 def check_and_delete_answered(q_list):
-
+    breakpoint()
     answered = Answer.get(g.userobj.id)
     for idx, question in enumerate(q_list):
         for answ in answered:
@@ -66,6 +66,13 @@ def _validate(data):
     for key, value in data.items():
         question = model.Session.query(Question).get(key)
         if question.mandatory and not value:
-            return data, {'Missing value': question.question_text}
+            return data, 'Missing value'
 
     return data, {}
+
+
+def has_unanswered_questions(answered):
+    all_questions = model.Session.query(Question).all()
+    if len(all_questions) > len(answered):
+        return True
+    return False

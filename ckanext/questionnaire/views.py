@@ -1,6 +1,4 @@
-from datetime import datetime
-
-from flask import Blueprint, render_template, request
+from flask import Blueprint
 from flask.views import MethodView
 
 import ckan.model as model
@@ -31,10 +29,21 @@ not_found_message = (
 
 class CreateQuestionView(MethodView):
 
-    def get(self, errors=None):
-
-        if not g.user or g.user and not g.userobj.sysadmin:
+    def _prepare(self):
+        context = {
+            u'model': model,
+            u'session': model.Session,
+            u'user': g.user,
+            u'auth_user_obj': g.userobj,
+        }
+        try:
+            toolkit.check_access(u'question_create', context)
+        except:
             return toolkit.abort(404, toolkit._(not_found_message))
+        return context
+
+    def get(self, errors=None):
+        self._prepare()
 
         qtype = ckanext_helpers.get_question_type()
         qrequire = ckanext_helpers.get_question_require()
@@ -55,11 +64,11 @@ class CreateQuestionView(MethodView):
             'vars_option': vars_option,
             'error': errors
         }
-        return toolkit.base.render("add_questions.html", extra_vars)
+        return toolkit.render("add_questions.html", extra_vars)
 
     def post(self):
 
-        context = {}
+        context = self._prepare()
         data = clean_dict(
             dict_fns.unflatten(tuplize_dict(parse_params(toolkit.request.form)))
         )
@@ -75,79 +84,91 @@ class CreateQuestionView(MethodView):
 
 class AnswersView(MethodView):
 
-    def get(self, data=None, errors={}):
-
-        if not g.user:
+    def _prepare(self):
+        context = {
+            u'model': model,
+            u'session': model.Session,
+            u'user': g.user,
+            u'auth_user_obj': g.userobj,
+        }
+        try:
+            toolkit.check_access(u'answer_create', context)
+        except:
             return toolkit.abort(404, toolkit._(not_found_message))
+        return context
+
+    def get(self, errors={}):
+        self._prepare()
 
         q_list = model.Session.query(Question).all()
         q_option_list = model.Session.query(QuestionOption).all()
         q_list = ckanext_helpers.check_and_delete_answered(q_list)
-        context = {
-            'data': data,
+
+        extra_vars = {
             'q_list' : q_list,
             'q_option_list' : q_option_list,
             'error': errors
         }
-
-        return render_template("answers.html", **context)
+        return toolkit.render("answers.html", extra_vars)
 
     def post(self):
 
+        context = self._prepare()
         form_data = clean_dict(
             dict_fns.unflatten(tuplize_dict(parse_params(toolkit.request.form)))
         )
 
-        data, errors = ckanext_helpers._validate(form_data)
-        if errors:
-            return self.get(form_data, errors)
-            # model.Session.rollback()
-            # raise ValidationError(errors)
+        try:
+            toolkit.get_action('answer_create')(context, form_data)
+        except ValidationError as e:
+            errors = e.error_dict
+            return self.get([errors.get('message')])
 
-        if model.Session.query(Answer).filter( Answer.user_id == g.userobj.id).count() == 0 :
-
-            # Save the answers to database
-            for key, value in data.items():
-                answer=Answer()
-                answer.user_id = g.userobj.id
-                answer.date_answered = str(datetime.now())
-                answer.question_id = key
-                answer.answer_text = value
-                model.Session.add(answer)
-                model.Session.commit()
-    
-        else:
-            #delete previous answers
-            model.Session.query(Answer).filter(Answer.user_id == g.userobj.id).delete()
-            model.Session.commit()
-            
-            # Save the answers to database
-            for key, value in form_data.items(multi=True):
-                answer=Answer()
-                answer.user_id = g.userobj.name
-                answer.date_answered = str(datetime.now())
-                answer.question_id = key
-                answer.answer_text = value
-                model.Session.add(answer)
-                model.Session.commit()
-
-        
         return toolkit.redirect_to(toolkit.url_for("dashboard.index"))
 
 
 class EditQuestionView(MethodView):
+
+    def _prepare(self):
+        context = {
+            u'model': model,
+            u'session': model.Session,
+            u'user': g.user,
+            u'auth_user_obj': g.userobj,
+        }
+        try:
+            toolkit.check_access(u'question_edit', context)
+        except:
+            return toolkit.abort(404, toolkit._(not_found_message))
+        return context
+
     def get(self, question_id):
-        pass
+        self._prepare()
+
+        question = model.Session.query(Question).get(question_id)
+        qrequire = ckanext_helpers.get_question_require()
+        extra_vars = {
+            "question": question,
+            "qrequire": qrequire
+        }
+
+        return toolkit.render("question_edit.html", extra_vars)
 
     def post(self, question_id):
-        pass
 
+        context = self._prepare()
+        data_dict = clean_dict(
+            dict_fns.unflatten(tuplize_dict(parse_params(toolkit.request.form)))
+        )
+        data_dict.update({"id": question_id})
 
-def has_unanswered_questions(answered):
-    all_questions = model.Session.query(Question).all()
-    if len(all_questions) > len(answered):
-        return True
-    return False
+        try:
+            toolkit.get_action("question_update")(context, data_dict)
+        except:
+            # TODO
+            pass
+
+        return toolkit.redirect_to("questionnaire.question_list")
 
 
 def custom_login():
@@ -158,11 +179,11 @@ def custom_login():
 
     if g.user and g.userobj:
         answered = Answer.get(g.userobj.id)
-        if not answered:
+        if not answered or ckanext_helpers.has_unanswered_questions(answered):
             return toolkit.redirect_to("questionnaire.answers")
 
-        if has_unanswered_questions(answered):
-            return toolkit.redirect_to("questionnaire.answers")
+        # if has_unanswered_questions(answered):
+        #     return toolkit.redirect_to("questionnaire.answers")
 
         return toolkit.redirect_to(route_after_login)
 
@@ -171,10 +192,22 @@ def custom_login():
     return toolkit.redirect_to('user.login')
 
 
-def read():
+def question_list():
+    context = {
+            u'model': model,
+            u'session': model.Session,
+            u'user': g.user,
+            u'auth_user_obj': g.userobj,
+        }
+
+    try:
+        toolkit.check_access(u'question_edit', context)
+    except:
+        return toolkit.abort(404, toolkit._(not_found_message))
+
     q_list = model.Session.query(Question).all()
     extra_vars = {"q_list" : q_list}
-    return toolkit.base.render("question_read.html", extra_vars)
+    return toolkit.render("question_read.html", extra_vars)
 
 
 def delete(question_id):
@@ -185,14 +218,15 @@ def delete(question_id):
         model.Session.commit()
         model.Session.query(Question).filter(Question.id == question_id).delete()
         model.Session.commit()
-        return toolkit.redirect_to("questionnaire.read")
+        return toolkit.redirect_to("questionnaire.question_list")
 
     return toolkit.render("question_delete.html", extra_vars={"question_id": question_id})
+
 
 questionnaire.add_url_rule(
     '/add_questions', view_func=CreateQuestionView.as_view(str("add_questions")))
 questionnaire.add_url_rule('/login', view_func=custom_login, methods=('GET', 'POST'))
-questionnaire.add_url_rule('/questions', view_func=read, methods=('GET', 'POST'))
+questionnaire.add_url_rule('/questions', view_func=question_list, methods=('GET', 'POST'))
 questionnaire.add_url_rule('/<question_id>/delete', view_func=delete, methods=('GET', 'POST'))
 questionnaire.add_url_rule(
     '/answers', view_func=AnswersView.as_view(str("answers")))
