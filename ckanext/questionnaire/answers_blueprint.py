@@ -56,7 +56,10 @@ def download_user_answers():
     
   
     for r in users_list:
-       
+        
+        user_answers=model.Session.query(Answer).filter(Answer.user == (r['name'])).all()
+        for answer in user_answers:
+            pass
         insert_row = (r['name'], r['fullname'], r['email'])
         df = pd.concat([df, pd.DataFrame([insert_row])])
     
