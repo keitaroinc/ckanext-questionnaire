@@ -1,7 +1,5 @@
 import ckan.model as model
 
-from operator import itemgetter
-
 from ckan.common import g
 
 from ckanext.questionnaire.model import Answer, Question
