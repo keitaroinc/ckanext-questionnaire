@@ -18,10 +18,6 @@
     {{ form.select(vars_qrequired.name, id=vars_qrequired.id, label=vars_qrequired.label, options=vars_qrequired.types ) }}
     {{ form.input(vars_qtext.name, label=vars_qtext.label, value="", error=error) }}
     {{ form.input(vars_option.name,  label=vars_option.label, value="", error=error, classes=["hidden"]) }}
-
-    {#<div class="form-group" style="display: flex;">
-      <input class="form-control hidden" name="{{vars_option.name}}", id="{{vars_option.id}}",  value="">
-    </div> #}
     </div>
     <div style="display:flex; gap:10px">
       <button icon='plus-square' class="btn btn-primary add_field_button hidden">{{ _("Add question option") }}</i></button>

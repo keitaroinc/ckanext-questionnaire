@@ -16,13 +16,6 @@ $("#field-question-type").on("change", function () {
 
     add_button_event;
   }
-
-  $(wrapper).on("click", ".remove_field", function (e) {
-    //user click on remove text
-    e.preventDefault();
-    $(this).parent("div").remove();
-    x--;
-  });
 });
 
 add_button_event = $(add_button).click(function (e) {
@@ -35,4 +28,12 @@ add_button_event = $(add_button).click(function (e) {
       '<div style="display:flex; gap:10px" class="form-group _show"><input id="question-option" type="text" name="question-option" class="form-control"><button class="btn btn-danger remove_field">-</button></div>'
     ); //add input box
   }
+});
+
+$(wrapper).on("click", ".remove_field", function (e) {
+  //user click on remove text
+  console.log(this);
+  e.preventDefault();
+  $(this).parent("div").remove();
+  x--;
 });

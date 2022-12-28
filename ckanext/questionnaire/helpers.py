@@ -81,3 +81,13 @@ def has_unanswered_questions(answered):
     if len(all_questions) > len(answered):
         return True
     return False
+
+
+def is_valid_uuid(value):
+    import uuid
+
+    try:
+        uuid.UUID(str(value))
+        return True
+    except ValueError:
+        return False

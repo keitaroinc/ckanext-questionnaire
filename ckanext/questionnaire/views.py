@@ -146,10 +146,12 @@ class EditQuestionView(MethodView):
         self._prepare()
 
         question = model.Session.query(Question).get(question_id)
+        q_options = QuestionOption.get(question_id)
         qrequire = ckanext_helpers.get_question_require()
         extra_vars = {
             "question": question,
-            "qrequire": qrequire
+            "qrequire": qrequire,
+            "q_options": q_options
         }
 
         return toolkit.render("question_edit.html", extra_vars)

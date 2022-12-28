@@ -61,6 +61,19 @@ class QuestionOption(DomainObject):
     def __init__(self, **kwargs):
         self.id=make_uuid()
 
+    @classmethod
+    def get(cls, question_id):
+        query = Session.query(cls).autoflush(False)
+        query = query.filter(cls.question_id == question_id)
+        return query.all()
+
+    @classmethod
+    def get_by_id(cls, _id):
+        query = Session.query(cls).autoflush(False)
+        query = query.filter(cls.id == _id)
+        return query.first()
+
+
 class Answer(DomainObject):
 
     def __init__(self, **kwargs):

@@ -68,6 +68,7 @@ def question_update(context, data_dict):
     question_text = data_dict.get("question-text")
     question_type = data_dict.get("question-type")
 
+    q_options = QuestionOption.get(question_id)
     question = model.Session.query(Question).get(question_id)
     if not question:
         raise toolkit.ObjectNotFound('Question Not Found')
@@ -79,6 +80,21 @@ def question_update(context, data_dict):
     if question_type and asbool(question_type) != question.mandatory:
         question.mandatory = asbool(question_type)
         for_update = True
+
+    q_opt_ids = [opt.id for opt in q_options]
+    if question.question_type != "text":
+        for key, value in data_dict.items():
+            if key in q_opt_ids:
+                q_opt_ids.remove(key)
+            if ckanext_helpers.is_valid_uuid(key):
+                q_option = QuestionOption.get_by_id(key)
+                q_option.answer_text = value
+                session.add(q_option)
+                for_update = True
+
+    if q_opt_ids:
+        for id in q_opt_ids:
+            QuestionOption.get_by_id(id).delete()
 
     if for_update:
         session.add(question)
