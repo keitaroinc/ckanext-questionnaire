@@ -87,10 +87,24 @@ def question_update(context, data_dict):
             if key in q_opt_ids:
                 q_opt_ids.remove(key)
             if ckanext_helpers.is_valid_uuid(key):
+                # field to update
                 q_option = QuestionOption.get_by_id(key)
-                q_option.answer_text = value
-                session.add(q_option)
-                for_update = True
+                if q_option:
+                    q_option.answer_text = value
+
+            # field to add
+            elif key == "question-option":
+                if not isinstance(value, list):
+                    value = [value]
+                for val in value:
+                    q_option = QuestionOption()
+                    q_option.question_id = question_id
+                    q_option.answer_text = val
+                    session.add(q_option)
+                    session.commit()
+
+            for_update = True
+            session.add(q_option)
 
     if q_opt_ids:
         for id in q_opt_ids:

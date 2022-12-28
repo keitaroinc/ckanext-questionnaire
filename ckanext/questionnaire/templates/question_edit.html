@@ -20,11 +20,9 @@
 
         {% if q_options %}
             {% for option in q_options %}
-            {#{{ form.input(name="question-option", value=option.answer_text, label="Edit Question option", classes=["d-flex"]) }} #}
-
             <div style="display:flex; gap:10px" class="form-group _show">
                 <input type="hidden" value="{{option.id}}">
-                <input id="{{option.id}}" type="text" name="{{option.id}}" class="form-control" value="{{option.answer_text}}"><button class="btn btn-danger remove_field">-</button>
+                <input id="{{option.id}}" type="text" name="{{option.id or question-option}}" class="form-control" value="{{option.answer_text}}"><button class="btn btn-danger remove_field">-</button>
             </div>
             {% endfor %}
         {% endif %}
