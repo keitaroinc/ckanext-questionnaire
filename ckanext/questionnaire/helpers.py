@@ -53,6 +53,9 @@ def get_question_option():
 
 def check_and_delete_answered(q_list):
     answered = Answer.get(g.userobj.id)
+    if not answered:
+        return q_list
+
     sorted_answ = sorted(answered, key=lambda answ: answ.question_id, reverse=True)
     sorted_q_list = sorted(q_list, key=lambda question: question.id, reverse=True)
     q_list = []

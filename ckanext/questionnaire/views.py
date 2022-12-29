@@ -98,10 +98,11 @@ class AnswersView(MethodView):
         return context
 
     def get(self, errors={}):
-        self._prepare()
+        context = self._prepare()
+        session = context.get('session')
 
-        q_list = model.Session.query(Question).all()
-        q_option_list = model.Session.query(QuestionOption).all()
+        q_list = session.query(Question).all()
+        q_option_list = session.query(QuestionOption).all()
         q_list = ckanext_helpers.check_and_delete_answered(q_list)
 
         extra_vars = {
