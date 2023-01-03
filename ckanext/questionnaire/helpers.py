@@ -56,17 +56,15 @@ def check_and_delete_answered(q_list):
     if not answered:
         return q_list
 
-    sorted_answ = sorted(answered, key=lambda answ: answ.question_id, reverse=True)
-    sorted_q_list = sorted(q_list, key=lambda question: question.id, reverse=True)
-    q_list = []
+    new_list = []
 
-    for question, answers in zip(sorted_q_list, sorted_answ):
-        if question.id == answers.question_id:
+    for question in q_list:
+        if question.id in [answ.question_id for answ in answered]:
             continue
         else:
-            q_list.append(question)
+            new_list.append(question)
 
-    return q_list
+    return new_list
 
 
 def _validate(data):
