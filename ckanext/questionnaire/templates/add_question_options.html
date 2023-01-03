@@ -15,6 +15,5 @@
     {{ form.input(vars_option.name, label=vars_option.name, value="") }}
       <button type='submit', class ='btn btn-primary', icon='plus-square' href="{{ h.url_for('questionnaire.add_question_option') }}">Add question option</button>
     {% link_for _('Add another question'), named_route='questionnaire.add_questions', class_='btn btn-primary'%}
-    </div>
 </form>
 {% endblock %}

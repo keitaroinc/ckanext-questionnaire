@@ -12,3 +12,11 @@
 #   output: ckanext-questionnaire/%(version)s-questionnaire.css
 #   contents:
 #     - css/questionnaire.css
+
+questionnaire-js:
+  output: ckanext-questionnaire/%(version)s-questionnaire.js
+  contents:
+    - js/repeater.js
+  extra:
+    preload:
+      - base/main
