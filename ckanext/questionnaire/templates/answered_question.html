@@ -1,0 +1,42 @@
+{% extends "user/dashboard.html" %}
+
+{% block subtitle %}{{ _('Your answered questions') }}{% endblock %}
+
+{% block breadcrumb_content %}
+<li class="active">{% link_for _('Answered'), named_route='questionnaire.answered' %}</li>
+{% endblock %}
+
+{% block secondary%}
+{% endblock %}
+
+{{ super() }}
+{% block primary_content_inner %}
+
+{% if answered %}
+<div class="table-responsive">
+    <h2 class="fs-2 text"> {{ _("Your answered questions") }} </h2>
+    <table class="table table-hover table-condensed">
+        <thead>
+            <tr>
+                <th>{{ _("Question text") }}</th>
+                <th>{{ _("Question type") }}</th>
+                <th>{{ _("Your answer") }}</th>
+                <th>{{ _("Date answered") }}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for answ in answered %}
+            <tr>
+                <td>{{ answ.question_text }}</td>
+                <td>{{ answ.question_type }}</td>
+                <td>{{ answ.answer_text }}</td>
+                <td>{{ h.render_datetime(answ.date_answered) }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<h2 style="margin-top:-1em;">{{ _("You haven't answered any question yet.") }}</h2>
+{% endif %}
+{% endblock %}

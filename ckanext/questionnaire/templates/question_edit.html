@@ -16,7 +16,7 @@
 <form id="question_edit_form" method="post">
     <div class="input_fields_wrap">
         {{ form.input(name="question-text", value=question.question_text, label="Edit Question text" ) }}
-        {{ form.select(name="question-type", options=qrequire.types, label="Edit Question required" ) }}
+        {{ form.select(name="question-type", selected=question.mandatory, options=qrequire.types, label="Edit Question required" ) }}
 
         {% if q_options %}
             {% for option in q_options %}

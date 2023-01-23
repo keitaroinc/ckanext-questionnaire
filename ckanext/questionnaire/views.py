@@ -182,7 +182,7 @@ def custom_login():
 
     if g.user and g.userobj:
         answered = Answer.get(g.userobj.id)
-        if not answered or ckanext_helpers.has_unanswered_questions(answered):
+        if ckanext_helpers.has_unanswered_questions(answered):
             return toolkit.redirect_to("questionnaire.answers")
 
         return toolkit.redirect_to(route_after_login)
@@ -210,6 +210,23 @@ def question_list():
     return toolkit.render("question_read.html", extra_vars)
 
 
+def answered():
+    context = {
+            u'model': model,
+            u'session': model.Session,
+            u'user': g.user,
+            u'auth_user_obj': g.userobj,
+    }
+
+    try:
+        answered = toolkit.get_action("answered_question")(context, {})
+    except:
+        toolkit.abort(404, toolkit._("User not found"))
+
+    extra_vars = {"answered" : answered}
+    return toolkit.render("answered_question.html", extra_vars)
+
+
 def delete(question_id):
 
     if toolkit.request.method == "POST":
@@ -230,6 +247,7 @@ questionnaire.add_url_rule('/questions', view_func=question_list, methods=('GET'
 questionnaire.add_url_rule('/<question_id>/delete', view_func=delete, methods=('GET', 'POST'))
 questionnaire.add_url_rule(
     '/answers', view_func=AnswersView.as_view(str("answers")))
+questionnaire.add_url_rule('/answered', view_func=answered)
 questionnaire.add_url_rule(
     '/<question_id>/edit', view_func=EditQuestionView.as_view(str("edit")))
 questionnaire.add_url_rule(

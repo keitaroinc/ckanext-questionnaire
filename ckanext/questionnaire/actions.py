@@ -9,6 +9,7 @@ from ckanext.questionnaire.model import Question, QuestionOption, Answer
 
 ValidationError = toolkit.ValidationError
 asbool = toolkit.asbool
+NotFound = toolkit.ObjectNotFound
 
 
 def question_create(context, data):
@@ -115,3 +116,24 @@ def question_update(context, data_dict):
         session.add(question)
         session.commit()
     return
+
+
+def answered_question(context, data_dict):
+    model = context.get("model")
+    userobj = context.get("auth_user_obj", None)
+
+    if not userobj:
+        raise NotFound(toolkit._('User not found'))
+
+    answered = Answer.get(userobj.id)
+    data_list = []
+
+    for answer in answered:
+        question = model.Session.query(Question).get(answer.question_id)
+        data_list.append(
+            {"question_text": question.question_text,
+            "question_type": question.question_type,
+            **answer.as_dict()
+        })
+
+    return data_list

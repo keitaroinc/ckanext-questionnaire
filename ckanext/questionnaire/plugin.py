@@ -55,7 +55,8 @@ class QuestionnairePlugin(plugins.SingletonPlugin):
         return {
             "question_create": actions.question_create,
             "answer_create": actions.answer_create,
-            "question_update": actions.question_update
+            "question_update": actions.question_update,
+            "answered_question": actions.answered_question
         }
 
     # IAuthFunctions
