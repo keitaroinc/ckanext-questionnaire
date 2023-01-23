@@ -137,3 +137,18 @@ def answered_question(context, data_dict):
         })
 
     return data_list
+
+
+def answered_question_update(context, data_dict):
+    model = context.get("model")
+    userobj = context.get("auth_user_obj", None)
+
+    if not userobj:
+        raise NotFound(toolkit._('User not found'))
+
+    updated_answer = data_dict.get("updated_answer")
+    answered_id = data_dict.get("answered_id")
+
+    answered = Answer.get(answered_id)
+    answered[0].answer_text = updated_answer
+    model.repo.commit()

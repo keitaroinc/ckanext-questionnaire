@@ -1,0 +1,28 @@
+{% extends 'page.html' %}
+{% import 'macros/form.html' as form %}
+
+{% block subtitle %}{{ _('Question Edit') }}{% endblock %}
+
+{% block breadcrumb_content %}
+<li class="active">{% link_for _('Back to answered'), named_route='questionnaire.answered' %}</li>
+<li class="active">{% link_for _('Manage'), named_route='questionnaire.answered_edit', answered_id=answered.id %}</li>
+{% endblock %}
+
+{% block secondary%}
+{% endblock %}
+
+{% block primary %}
+<form id="question_edit_form" method="post">
+    <div class="input_fields_wrap">
+        {{ form.input(name="question-text", value=answered.question_text, label="Question text", classes=["control-full"], attrs={"disabled":"disabled"}) }}
+        {% if answered.question_type == "text" %}
+            {{ form.input(name="answered-text", value=answered.answer_text, label="Edit answered text") }}
+        {% else %}
+            {{ form.select(name="question-type", options=q_opts, selected=answered.answer_text, label="Edit Question option" ) }}
+        {% endif %}
+
+    </div>
+    <button type='submit', class ='btn btn-primary', icon='plus-square' href="{{ h.url_for('questionnaire.answered_edit', answered_id=answered.id) }}">{{_('Update')}}</button>
+</form>
+
+{% endblock %}

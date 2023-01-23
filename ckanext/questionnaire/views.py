@@ -6,7 +6,7 @@ import ckan.logic as logic
 import ckan.plugins.toolkit as toolkit
 import ckan.lib.navl.dictization_functions as dict_fns
 
-from ckan.common import g
+from ckan.common import g, request
 
 import ckanext.questionnaire.helpers as ckanext_helpers
 
@@ -227,6 +227,37 @@ def answered():
     return toolkit.render("answered_question.html", extra_vars)
 
 
+def answered_edit(answered_id):
+    context = {
+            u'model': model,
+            u'session': model.Session,
+            u'user': g.user,
+            u'auth_user_obj': g.userobj,
+    }
+
+    answered = toolkit.get_action("answered_question")(context, {})
+    for answ in answered:
+        if answ.get("id") == answered_id:
+            break
+
+    if request.method == "POST":
+        updated_answer = request.form.get("answered-text") or request.form.get("question-type")
+        if updated_answer != answ.get('answer_text'):
+
+            data_dict = {
+                "updated_answer": updated_answer,
+                "answered_id": answered_id
+            }
+
+            toolkit.get_action("answered_question_update")(context, data_dict)
+            return toolkit.redirect_to("questionnaire.answered")
+
+    question_opts = QuestionOption.get(answ.get("question_id"))
+    q_opts = [{"key": q_opts.answer_text, "value": q_opts.answer_text} for q_opts in question_opts]
+    extra_vars = {"answered": answ, "q_opts": q_opts}
+    return toolkit.render("answered_edit.html", extra_vars)
+
+
 def delete(question_id):
 
     if toolkit.request.method == "POST":
@@ -248,6 +279,7 @@ questionnaire.add_url_rule('/<question_id>/delete', view_func=delete, methods=('
 questionnaire.add_url_rule(
     '/answers', view_func=AnswersView.as_view(str("answers")))
 questionnaire.add_url_rule('/answered', view_func=answered)
+questionnaire.add_url_rule('/answered/<answered_id>/edit', view_func=answered_edit, methods=('GET', 'POST'))
 questionnaire.add_url_rule(
     '/<question_id>/edit', view_func=EditQuestionView.as_view(str("edit")))
 questionnaire.add_url_rule(

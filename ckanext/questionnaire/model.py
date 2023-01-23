@@ -3,6 +3,7 @@ import datetime
 
 from sqlalchemy import types, Table, Column, MetaData, ForeignKey
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql.expression import or_
 
 import ckan.model as model
 
@@ -83,7 +84,8 @@ class Answer(DomainObject):
     @classmethod
     def get(cls, user_reference):
         query = Session.query(cls).autoflush(False)
-        query = query.filter(cls.user_id == user_reference)
+        query = query.filter(or_(cls.user_id == user_reference,
+                                cls.id == user_reference))
         return query.all()
 
 

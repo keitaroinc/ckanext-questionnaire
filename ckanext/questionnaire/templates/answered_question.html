@@ -22,6 +22,7 @@
                 <th>{{ _("Question type") }}</th>
                 <th>{{ _("Your answer") }}</th>
                 <th>{{ _("Date answered") }}</th>
+                <th>{{ _("Edit") }}</th>
             </tr>
         </thead>
         <tbody>
@@ -31,6 +32,7 @@
                 <td>{{ answ.question_type }}</td>
                 <td>{{ answ.answer_text }}</td>
                 <td>{{ h.render_datetime(answ.date_answered) }}</td>
+                <td><a class="btn btn-primary" href="{{ h.url_for('questionnaire.answered_edit', answered_id=answ.id) }}"><i class="fa fa-edit"></a></i></td>
             </tr>
         {% endfor %}
         </tbody>
