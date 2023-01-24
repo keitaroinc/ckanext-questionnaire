@@ -10,6 +10,7 @@ from ckanext.questionnaire.model import Question, QuestionOption, Answer
 ValidationError = toolkit.ValidationError
 asbool = toolkit.asbool
 NotFound = toolkit.ObjectNotFound
+NotAuthorized = toolkit.NotAuthorized
 
 
 def question_create(context, data):
@@ -121,11 +122,18 @@ def question_update(context, data_dict):
 def answered_question(context, data_dict):
     model = context.get("model")
     userobj = context.get("auth_user_obj", None)
+    answered_id = data_dict.get("answered_id", None)
 
     if not userobj:
         raise NotFound(toolkit._('User not found'))
 
-    answered = Answer.get(userobj.id)
+    answered = Answer.get(answered_id)
+    if not answered:
+        answered = Answer.get(userobj.id)
+
+    if userobj.id not in [answ.user_id for answ in answered]:
+        raise NotAuthorized('Unauthorized to edit question')
+
     data_list = []
 
     for answer in answered:
@@ -144,11 +152,17 @@ def answered_question_update(context, data_dict):
     userobj = context.get("auth_user_obj", None)
 
     if not userobj:
-        raise NotFound(toolkit._('User not found'))
+        raise NotFound(toolkit._("User not found"))
 
     updated_answer = data_dict.get("updated_answer")
     answered_id = data_dict.get("answered_id")
 
     answered = Answer.get(answered_id)
-    answered[0].answer_text = updated_answer
+    if isinstance(answered, list):
+        answered = answered[0]
+
+    if userobj.id != answered.user_id:
+        raise NotAuthorized("Unauthorized to edit question")
+
+    answered.answer_text = updated_answer
     model.repo.commit()

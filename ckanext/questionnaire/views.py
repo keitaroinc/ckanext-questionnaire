@@ -18,6 +18,8 @@ clean_dict = logic.clean_dict
 tuplize_dict = logic.tuplize_dict
 parse_params = logic.parse_params
 ValidationError = toolkit.ValidationError
+NotFound = toolkit.ObjectNotFound
+NotAuthorized = toolkit.NotAuthorized
 
 questionnaire = Blueprint('questionnaire', __name__)
 
@@ -234,8 +236,13 @@ def answered_edit(answered_id):
             u'user': g.user,
             u'auth_user_obj': g.userobj,
     }
+    data_dict = {"answered_id": answered_id}
 
-    answered = toolkit.get_action("answered_question")(context, {})
+    try:
+        answered = toolkit.get_action("answered_question")(context, data_dict)
+    except (NotFound, NotAuthorized):
+        toolkit.abort(404, toolkit._('Question not found'))
+
     for answ in answered:
         if answ.get("id") == answered_id:
             break
@@ -243,18 +250,16 @@ def answered_edit(answered_id):
     if request.method == "POST":
         updated_answer = request.form.get("answered-text") or request.form.get("question-type")
         if updated_answer != answ.get('answer_text'):
-
-            data_dict = {
-                "updated_answer": updated_answer,
-                "answered_id": answered_id
-            }
+            data_dict.update({"updated_answer": updated_answer})
 
             toolkit.get_action("answered_question_update")(context, data_dict)
             return toolkit.redirect_to("questionnaire.answered")
 
     question_opts = QuestionOption.get(answ.get("question_id"))
+
     q_opts = [{"key": q_opts.answer_text, "value": q_opts.answer_text} for q_opts in question_opts]
     extra_vars = {"answered": answ, "q_opts": q_opts}
+
     return toolkit.render("answered_edit.html", extra_vars)
 
 
