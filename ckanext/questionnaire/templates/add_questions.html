@@ -1,17 +1,28 @@
 {% extends "page.html" %}
 {% import 'macros/form.html' as form %}
 
-  {% block subtitle %}{{ _('Add Questions') }}{% endblock %}
+{% block subtitle %}{{ _('Add Questions') }}{% endblock %}
 
-  {% block breadcrumb_content %}
-  <li class="active">{% link_for _('Add Questions'), named_route='questionnaire.add_questions' %}</li>
-  <li class="active">{% link_for _('All Questions'), named_route='questionnaire.question_list' %}</li>
-  {% endblock %}
+{% block breadcrumb_content %}
+<li class="active">{% link_for _('Add Questions'), named_route='questionnaire.add_questions' %}</li>
+{% endblock %}
 
-  {% block secondary%}
-  {% endblock %}
+
+{% block secondary%}
+{% endblock %}
 
 {% block primary %}
+
+{% block content_primary_nav %}
+<ul class="nav nav-tabs">
+  {% block dashboard_nav_links %}
+    {{ h.build_nav_icon('questionnaire.add_questions', _('Add Questions'), icon='question-circle') }}
+    {{ h.build_nav_icon('questionnaire.question_list', _('All Questions'), icon='list') }}
+  {% endblock dashboard_nav_links %}
+</ul>
+{% endblock %}
+
+
 <form id="question_add_form" method="post">
   <div class="input_fields_wrap">
     {{ form.select(vars_type.name, id=vars_type.id, label=vars_type.label, options=vars_type.types ) }}
