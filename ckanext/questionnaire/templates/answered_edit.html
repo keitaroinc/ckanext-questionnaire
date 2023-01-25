@@ -17,8 +17,17 @@
         {{ form.input(name="question-text", value=answered.question_text, label="Question text", classes=["control-full"], attrs={"disabled":"disabled"}) }}
         {% if answered.question_type == "text" %}
             {{ form.input(name="answered-text", value=answered.answer_text, label="Edit answered text") }}
-        {% else %}
+        {% elif answered.question_type == "select_one"   %}
             {{ form.select(name="question-type", options=q_opts, selected=answered.answer_text, label="Edit Question option" ) }}
+        {% else %}
+            <label class="control-label" id="{{ answered.question_id }}" name="{{ answered.question_text }}">{{ answered.question_text }}</label></br>
+            {% for opts in q_opts %}
+                {% set checked = opts.value in answered.answer_text %}
+                <input type="checkbox" id='question-type' {{ "checked " if checked }} name="question-type" value="{{ opts.value }}">
+                <label for="{{ answered.question_id }}">{{ opts.value }}</label><br>
+
+            {% endfor %}
+            <p style="margin-top:2em;"></p>
         {% endif %}
 
     </div>
