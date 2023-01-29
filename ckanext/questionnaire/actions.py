@@ -127,9 +127,9 @@ def answered_question(context, data_dict):
     if not userobj:
         raise NotFound(toolkit._('User not found'))
 
-    answered = Answer.get(answered_id)
+    answered = Answer.get(answered_id) or Answer.get(userobj.id)
     if not answered:
-        answered = Answer.get(userobj.id)
+        return
 
     if userobj.id not in [answ.user_id for answ in answered]:
         raise NotAuthorized('Unauthorized to edit question')

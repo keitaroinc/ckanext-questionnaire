@@ -171,7 +171,7 @@ class EditQuestionView(MethodView):
 
 def custom_login():
 
-    route_after_login = toolkit.config.get("ckan.route_after_login")
+    route_after_login = "user.me"
     if g.user and g.userobj.sysadmin:
         return toolkit.redirect_to(route_after_login)
 
