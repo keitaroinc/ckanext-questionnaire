@@ -88,7 +88,7 @@ ON CKAN <= 2.8:
 
 6. For uninstalling the extension, drop the tables in the database using running:
 ```
-    ckan -c /path/to/ini/file questionnaire delete-db
+ckan -c /path/to/ini/file questionnaire delete-db
 ```
 
 
