@@ -19,9 +19,9 @@ Compatibility with core CKAN versions:
 
 ## Screenshots
 
-* In order to add questions for the users, a sysadmin account is required. 
+In order to add questions for the users, a sysadmin account is required. 
 
-![image](screenshots/navbar.png)
+![image](screenshots/navbar_button.png)
 
 * Question interface 
 
@@ -40,6 +40,7 @@ This form on the ‘Add Questions’ tab, is allowing the sysadmin user to add t
 ![image](screenshots/selectMany.png)
 
 * Editing a Question
+
 The sysadmin user can edit the question and all of its fields and delete it.
 ![image](screenshots/editQuestion.png)
 
@@ -89,7 +90,6 @@ ON CKAN <= 2.8:
 
     ckan -c /path/to/ini/file questionnaire delete-db
 
- 
 
 
 ## Config settings
