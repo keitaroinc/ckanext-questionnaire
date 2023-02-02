@@ -80,7 +80,7 @@ class CreateQuestionView(MethodView):
             errors = e.error_dict
             return self.get([errors.get("message")])
 
-        return toolkit.redirect_to(toolkit.url_for("dashboard.datasets"))
+        return toolkit.redirect_to(toolkit.url_for("questionnaire.question_list"))
 
 
 class AnswersView(MethodView):
@@ -121,7 +121,7 @@ class AnswersView(MethodView):
             errors = e.error_dict
             return self.get([errors.get("message")])
 
-        return toolkit.redirect_to(toolkit.url_for("dashboard.index"))
+        return toolkit.redirect_to("questionnaire.answered")
 
 
 class EditQuestionView(MethodView):
