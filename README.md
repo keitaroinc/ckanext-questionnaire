@@ -19,15 +19,19 @@ Compatibility with core CKAN versions:
 
 ## Screenshots
 
-* In order to add questions for the users, a sysadmin account is required.
-![image](screenshots/Screenshot from 2023-02-02 11-47-32.png)
+* In order to add questions for the users, a sysadmin account is required. 
 
-* Question interface
+![image](screenshots/navbar.png)
+
+* Question interface 
+
 By clicking on the icon on the top navigation bar, the sysadmin user is redirected to the User Questions page. Here the user can select what type of question wants to create, fulfill the question text and decide whether the question is required or not.
 ![image](screenshots/text.png)
 
-* Add Questions tab
-This form on the ‘Add Questions’ tab, is allowing the sysadmin user to add the questions for the users. The sysadmin can choose one of the options to define how the Question will be answered: Text, Select One option or Select Many options. Above, in Question interface part, the Text option is displayed. Below, Select One and Select Many options are displayed. Additionally, the admin can decide whether the Question is mandatory or not by filling the Required field with Yes or No.
+* Add Questions tab 
+
+This form on the ‘Add Questions’ tab, is allowing the sysadmin user to add the questions for the users. The sysadmin can choose one of the options to define how the Question will be answered: Text, Select One option or Select Many options. Above, in Question interface part, the Text option is displayed. Below, Select One and Select Many options are displayed. Additionally, the admin can decide whether the Question is mandatory or not by filling the Required field with Yes or No. 
+
 
 * Select One
 ![image](screenshots/selectOne.png)
@@ -83,7 +87,7 @@ ON CKAN <= 2.8:
 
 6. For uninstalling the extension, drop the tables in the database using running:
 
-     ckan -c /path/to/ini/file questionnaire delete-db
+    ckan -c /path/to/ini/file questionnaire delete-db
 
  
 
