@@ -1,0 +1,35 @@
+{% extends 'page.html' %}
+{% import 'macros/form.html' as form %}
+
+{% block subtitle %}{{ _('Question Edit') }}{% endblock %}
+
+{% block breadcrumb_content %}
+<li class="active">{% link_for _('Add Questions'), named_route='questionnaire.add_questions' %}</li>
+<li class="active">{% link_for _('All Questions'), named_route='questionnaire.question_list' %}</li>
+<li class="active">{% link_for _('Manage'), named_route='questionnaire.edit', question_id=question_id %}</li>
+{% endblock %}
+
+{% block secondary%}
+{% endblock %}
+
+{% block primary %}
+<form id="question_edit_form" method="post">
+    <div class="input_fields_wrap">
+        {{ form.input(name="question-text", value=question.question_text, label="Edit Question text" ) }}
+        {{ form.select(name="question-type", selected=question.mandatory, options=qrequire.types, label="Edit Question required" ) }}
+
+        {% if q_options %}
+            {% for option in q_options %}
+            <div style="display:flex; gap:10px" class="form-group _show">
+                <input type="hidden" value="{{option.id}}">
+                <input id="{{option.id}}" type="text" name="{{option.id or question-option}}" class="form-control" value="{{option.answer_text}}"><button class="btn btn-danger remove_field">-</button>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    {% if q_options %}
+        <button icon='plus-square' class="btn btn-primary add_field_button">{{ _("Add question option") }}</i></button>
+    {% endif %}
+    <button type='submit', class ='btn btn-primary', icon='plus-square' href="{{ h.url_for('questionnaire.add_questions') }}">{{_('Update Question')}}</button>
+</form>
+{% endblock %}

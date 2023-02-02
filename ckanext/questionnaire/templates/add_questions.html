@@ -1,23 +1,39 @@
 {% extends "page.html" %}
-  
-  {% block subtitle %}{{ _('Add Questions') }}{% endblock %}
+{% import 'macros/form.html' as form %}
 
-  {% block breadcrumb_content %}
-  <li class="active">{% link_for _('Add Questions'), named_route='questionnaire.add_questions' %}</li>
-  {% endblock %}
+{% block subtitle %}{{ _('Add Questions') }}{% endblock %}
 
-  {% block secondary%}
-  {% endblock %}
-
-{% block primary %}
-<form id="question_add_form" method="post">
-    <label class="control-label" for="field-add-question">Add Question</label>
-    <input id="field-add-question" class="form-control", type="text" name="add-question" placeholder="Input question here">
-    <div style="margin-top: 1em;">
-      <button type='submit', class ='btn btn-primary', icon='plus-square' href="{{ h.url_for('questionnaire.add_answers') }}">{{_('Add Question')}}</button>
-    </div>
-  </form>
-  
+{% block breadcrumb_content %}
+<li class="active">{% link_for _('Add Questions'), named_route='questionnaire.add_questions' %}</li>
 {% endblock %}
 
 
+{% block secondary%}
+{% endblock %}
+
+{% block primary %}
+
+{% block content_primary_nav %}
+<ul class="nav nav-tabs">
+  {% block dashboard_nav_links %}
+    {{ h.build_nav_icon('questionnaire.add_questions', _('Add Questions'), icon='question-circle') }}
+    {{ h.build_nav_icon('questionnaire.question_list', _('All Questions'), icon='list') }}
+  {% endblock dashboard_nav_links %}
+</ul>
+{% endblock %}
+
+
+<form id="question_add_form" method="post">
+  <div class="input_fields_wrap">
+    {{ form.select(vars_type.name, id=vars_type.id, label=vars_type.label, options=vars_type.types ) }}
+    {{ form.select(vars_qrequired.name, id=vars_qrequired.id, label=vars_qrequired.label, options=vars_qrequired.types ) }}
+    {{ form.input(vars_qtext.name, label=vars_qtext.label, value="", error=error) }}
+    {{ form.input(vars_option.name,  label=vars_option.label, value="", error=error, classes=["hidden"]) }}
+    </div>
+    <div style="display:flex; gap:10px">
+      <button icon='plus-square' class="btn btn-primary add_field_button hidden">{{ _("Add question option") }}</i></button>
+      <button type='submit', class ='btn btn-primary', icon='plus-square' href="{{ h.url_for('questionnaire.add_questions') }}">{{_('Add Question')}}</button>
+    </div>
+  </form>
+
+{% endblock %}
