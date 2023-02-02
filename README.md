@@ -53,13 +53,10 @@ ON CKAN <= 2.8:
 
 ## Config settings
 
-None at present
+When logging in the user is redirected to the Questions page available on the User Dashboard page.
+You need to add the following setting in your ckan.ini file:
 
-**TODO:** Document any optional config settings here. For example:
-
-	# The minimum number of hours to wait before re-checking a resource
-	# (optional, default: 24).
-	ckanext.questionnaire.some_setting = some_default_value
+	route_after_login = "user.me"
 
 
 ## Developer installation
