@@ -12,6 +12,7 @@
 
 {{ super() }}
 {% block primary_content_inner %}
+  {% if q_list %}
   <h2 style="margin-top:-1em;">Please answer the following questions</h2>
 
   <form id="answers_add_form" method="POST">
@@ -19,7 +20,7 @@
 {% for question in q_list %}
 
   {% if question.question_type=="text" %}
-    {{ form.input(question.id, label=question.question_text, value="") }}
+    {{ form.input(question.id, label=question.question_text, error=error, value="") }}
   {% endif %}
 
   {% if question.question_type=="select_one" %}
@@ -50,4 +51,7 @@
   </div>
 </form>
 
+{% else %}
+<h2 style="margin-top:-1em;">{{ _('No questions found.') }}</h2>
+{% endif %}
   {% endblock %}

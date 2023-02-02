@@ -1,0 +1,50 @@
+{% extends "page.html" %}
+
+{% block subtitle %}{{ _('Questions') }}{% endblock %}
+
+{% block breadcrumb_content %}
+<li class="active">{% link_for _('All Questions'), named_route='questionnaire.question_list' %}</li>
+{% endblock %}
+
+{% block secondary%}
+{% endblock %}
+
+{% block primary %}
+
+{% block content_primary_nav %}
+<ul class="nav nav-tabs">
+  {% block dashboard_nav_links %}
+    {{ h.build_nav_icon('questionnaire.add_questions', _('Add Questions'), icon='question-circle') }}
+    {{ h.build_nav_icon('questionnaire.question_list', _('All Questions'), icon='list') }}
+  {% endblock dashboard_nav_links %}
+</ul>
+{% endblock %}
+    
+<div class="table-responsive">
+    <h2 class="fs-2 text"> {{ _("All Questions") }} </h2>
+    <table class="table table-hover table-condensed">
+        <thead>
+            <tr>
+                <th>{{ _("Name") }}</th>
+                <th>{{ _("Type") }}</th>
+                <th>{{ _("Created") }}</th>
+                <th>{{ _("Edit") }}</th>
+                <th>{{ _("Delete") }}</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for question in q_list %}
+            <tr>
+                <td>{{ question.question_text }}</td>
+                <td>{{ question.question_type }}</td>
+                <td> {{ h.render_datetime(question.created , with_hours=True) }}</td>        
+                <td><a class="btn btn-primary" href="{{ h.url_for('questionnaire.edit', question_id=question.id) }}"><i class="fa fa-edit"></a></i></td>
+                <form id='confirm-question-delete-form' method="post">
+                    <td><a class="btn btn-danger" href="{{ h.url_for('questionnaire.delete', question_id=question.id) }}" data-module="confirm-action" data-module-content="{{ _('Are you sure you want to delete this Question?') }}"><i class="fa fa-trash"></i></a></td>
+                </form>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

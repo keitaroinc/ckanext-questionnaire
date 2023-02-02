@@ -1,17 +1,19 @@
-import model
+import logging 
+import datetime
+
+from sqlalchemy import types, Table, Column, MetaData, ForeignKey
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql.expression import or_
+
+import ckan.model as model
+
+from ckan.common import g
 from ckan.model.meta import metadata, mapper, Session
 from ckan.model.domain_object import DomainObject
 from ckan.model.types import make_uuid
-from ckan import model
-from flask import g
-from sqlalchemy import types, Table, Column, MetaData, ForeignKey
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
-import logging, datetime
 
 
 log = logging.getLogger(__name__)
-
 
 metadata = MetaData()
 
@@ -48,11 +50,30 @@ class Question(DomainObject):
     def get_all(cls):
         return Session.query(cls).all()
 
+    @classmethod
+    def get(cls, question_id):
+        query = Session.query(cls).autoflush(False)
+        query = query.filter(cls.id == question_id)
+        return query.first()
+
 
 class QuestionOption(DomainObject):
 
     def __init__(self, **kwargs):
         self.id=make_uuid()
+
+    @classmethod
+    def get(cls, question_id):
+        query = Session.query(cls).autoflush(False)
+        query = query.filter(cls.question_id == question_id)
+        return query.all()
+
+    @classmethod
+    def get_by_id(cls, _id):
+        query = Session.query(cls).autoflush(False)
+        query = query.filter(cls.id == _id)
+        return query.first()
+
 
 class Answer(DomainObject):
 
@@ -60,11 +81,17 @@ class Answer(DomainObject):
         self.id=make_uuid()
         self.user_id=g.userobj.id
 
+    @classmethod
+    def get(cls, user_reference):
+        query = Session.query(cls).autoflush(False)
+        query = query.filter(or_(cls.user_id == user_reference,
+                                cls.id == user_reference))
+        return query.all()
+
 
 mapper(Question, question_table, properties={})
 mapper(QuestionOption, question_option_table, properties={'question': relationship (Question)})
 mapper(Answer, answer_table, properties={'question': relationship (Question)})
-
 
 
 def init_tables(self):
