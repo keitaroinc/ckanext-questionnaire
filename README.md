@@ -73,13 +73,7 @@ To install ckanext-questionnaire:
 
 4. Create the database tables running:
 
-ON CKAN >= 2.9:
-
     ckan -c /path/to/ini/file questionnaire init-db
-
-ON CKAN <= 2.8:
-
-    paster questionnaire init-db -c ../path/to/ini/file
 
 
 5. Restart CKAN. For example if you've deployed CKAN with Apache on Ubuntu:
