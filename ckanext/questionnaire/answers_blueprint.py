@@ -25,7 +25,7 @@ def download_answers():
             writer.writerow(["Username", "User Fullname", "User email", "Question", "Answer ", "Date answered"])
             for answ in answer_db:
                 question = model.Session.query(Question).get(answ.question_id)
-                user =logic.get_action(u'user_show')({}, {'id': answ.user_id})              
+                user = logic.get_action(u'user_show')({}, {'id': answ.user_id})
 
                 row = answer_to_tuple(user, question, answ)
                 writer.writerow(row)
