@@ -15,7 +15,7 @@ class QuestionnairePlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.ITemplateHelpers)
     plugins.implements(plugins.IBlueprint)
     plugins.implements(plugins.IClick)
-    plugins.implements(plugins.IAuthenticator)
+    plugins.implements(plugins.IAuthenticator, inherit=True)
     plugins.implements(plugins.IActions)
     plugins.implements(plugins.IAuthFunctions)
 
