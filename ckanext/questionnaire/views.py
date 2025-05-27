@@ -12,7 +12,14 @@ import ckanext.questionnaire.helpers as ckanext_helpers
 
 from ckanext.questionnaire.model import Question, QuestionOption, Answer
 from ckanext.questionnaire.answers_blueprint import download_answers
-
+from ckan.common import (
+    _, config, g, request, current_user, login_user, logout_user, session,
+    repr_untrusted
+)
+import ckan.lib.authenticator as authenticator
+import ckan.lib.base as base
+from ckan.views.user import next_page_or_default, rotate_token
+from ckan.lib.helpers import helper_functions as h
 
 clean_dict = logic.clean_dict
 tuplize_dict = logic.tuplize_dict
@@ -171,20 +178,43 @@ class EditQuestionView(MethodView):
 
 def custom_login():
 
-    route_after_login = "user.me"
-    if g.user and g.userobj.sysadmin:
-        return toolkit.redirect_to(route_after_login)
+    extra_vars: dict[str, Any] = {}
 
-    if g.user and g.userobj:
-        answered = Answer.get(g.userobj.id)
-        if ckanext_helpers.has_unanswered_questions(answered):
-            return toolkit.redirect_to("questionnaire.answers")
+    print("===================================")
+    print("Login from Questionarre")
+    print("===================================")
+    if current_user.is_authenticated:
+        return base.render("user/logout_first.html", extra_vars)
 
-        return toolkit.redirect_to(route_after_login)
+    if request.method == "POST":
+        username_or_email = request.form.get("login")
+        password = request.form.get("password")
+        _remember = request.form.get("remember")
 
-    err = toolkit._("Login failed. Bad username or password.")
-    toolkit.h.flash_error(err)
-    return toolkit.redirect_to("user.login")
+        identity = {
+            u"login": username_or_email,
+            u"password": password
+        }
+
+        user_obj = authenticator.ckan_authenticator(identity)
+        if user_obj:
+            next = request.args.get('next', request.args.get('came_from'))
+            if _remember:
+                from datetime import timedelta
+                duration_time = timedelta(milliseconds=int(_remember))
+                login_user(user_obj, remember=True, duration=duration_time)
+                rotate_token()
+                return next_page_or_default(next)
+            else:
+                login_user(user_obj)
+                rotate_token()
+                return next_page_or_default(next)
+        else:
+            err = _(u"Login failed. Bad username or password.")
+            h.flash_error(err)
+            return base.render("user/login.html", extra_vars)
+
+    return base.render("user/login.html", extra_vars)
 
 
 def question_list():
@@ -282,7 +312,6 @@ def delete(question_id):
 questionnaire.add_url_rule(
     "/add_questions", view_func=CreateQuestionView.as_view(str("add_questions"))
 )
-questionnaire.add_url_rule("/login", view_func=custom_login, methods=("GET", "POST"))
 questionnaire.add_url_rule(
     "/questions", view_func=question_list, methods=("GET", "POST")
 )
