@@ -6,16 +6,13 @@ import ckan.logic as logic
 import ckan.plugins.toolkit as toolkit
 import ckan.lib.navl.dictization_functions as dict_fns
 
-from ckan.common import g, request
+from ckan.common import _, g, request,  current_user, login_user
 
 import ckanext.questionnaire.helpers as ckanext_helpers
 
 from ckanext.questionnaire.model import Question, QuestionOption, Answer
 from ckanext.questionnaire.answers_blueprint import download_answers
-from ckan.common import (
-    _, config, g, request, current_user, login_user, logout_user, session,
-    repr_untrusted
-)
+
 import ckan.lib.authenticator as authenticator
 import ckan.lib.base as base
 from ckan.views.user import next_page_or_default, rotate_token
@@ -180,9 +177,6 @@ def custom_login():
 
     extra_vars: dict[str, Any] = {}
 
-    print("===================================")
-    print("Login from Questionarre")
-    print("===================================")
     if current_user.is_authenticated:
         return base.render("user/logout_first.html", extra_vars)
 
@@ -197,8 +191,13 @@ def custom_login():
         }
 
         user_obj = authenticator.ckan_authenticator(identity)
+
         if user_obj:
-            next = request.args.get('next', request.args.get('came_from'))
+            answered = Answer.get(user_obj.id)
+            if user_obj.sysadmin or not ckanext_helpers.has_unanswered_questions(answered):
+                next = request.args.get('next', request.args.get('came_from'))
+            else:
+                next = "/answers"
             if _remember:
                 from datetime import timedelta
                 duration_time = timedelta(milliseconds=int(_remember))
