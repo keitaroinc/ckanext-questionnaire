@@ -16,7 +16,7 @@ setup(
     # Versions should comply with PEP440.  For a discussion on single-sourcing
     # the version across setup.py and the project code, see
     # http://packaging.python.org/en/latest/tutorial.html#version
-    version='0.0.1',
+    version='1.2.0',
 
     description='''Questionnaire''',
     long_description=long_description,
@@ -26,7 +26,7 @@ setup(
     url='https://github.com/blagojabozinovski/ckanext-questionnaire',
 
     # Author details
-    author='''Blagoja''',
+    author='''Blagoja Bozinovski''',
     author_email='''blagoja.bozinovski@keitaro.com''',
 
     # Choose your license
