@@ -1,13 +1,11 @@
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 
-from ckan.views.user import _get_repoze_handler
-
+# from ckan.views.user import _get_repoze_handler
 import ckanext.questionnaire.cli as cli
 import ckanext.questionnaire.actions as actions
 import ckanext.questionnaire.auth as auth
-
-from ckanext.questionnaire.views import questionnaire
+from ckanext.questionnaire.views import questionnaire, custom_login
 
 
 class QuestionnairePlugin(plugins.SingletonPlugin):
@@ -20,27 +18,9 @@ class QuestionnairePlugin(plugins.SingletonPlugin):
     plugins.implements(plugins.IAuthFunctions)
 
     # IAuthenticator
-
-    def identify(self):
-        response = None
-        return response
-
     def login(self):
+        return custom_login()
 
-        extra_vars = {}
-        if toolkit.g.user:
-            return toolkit.base.render(u'user/logout_first.html', extra_vars)
-
-        came_from = toolkit.request.params.get(u'came_from')
-        if not came_from:
-            came_from = toolkit.url_for('questionnaire.custom_login')
-        toolkit.g.login_handler = toolkit.url_for(_get_repoze_handler(u'login_handler_path'), came_from=came_from)
-
-        return toolkit.base.render(u'user/login.html', extra_vars)
-
-    def logout(self):
-        response = None
-        return response
 
     # IConfigurer
 
