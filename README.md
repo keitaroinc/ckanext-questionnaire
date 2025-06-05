@@ -10,11 +10,11 @@ Compatibility with core CKAN versions:
 
 | CKAN version    | Compatible?   |
 | --------------- | ------------- |
-| 2.8             | not tested    |
 | 2.9             | Yes           |
-| 2.10            | No            |
+| 2.10            | Yes           |
+| 2.11            | Yes           |
 
-
+For CKAN 2.9 use tag V1.2
 
 ## Screenshots
 
