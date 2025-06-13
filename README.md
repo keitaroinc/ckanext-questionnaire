@@ -1,4 +1,5 @@
-[![Tests](https://github.com/blagojabozinovski/ckanext-questionnaire/workflows/Tests/badge.svg?branch=main)](https://github.com/blagojabozinovski/ckanext-questionnaire/actions)
+[![Tests](https://github.com/keitaroinc/ckanext-questionnaire/actions/workflows/test.yml/badge.svg)](https://github.com/keitaroinc/ckanext-questionnaire/actions)
+
 
 # ckanext-questionnaire
 
