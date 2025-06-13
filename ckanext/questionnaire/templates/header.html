@@ -8,6 +8,11 @@
     <i class="fa fa-address-book"></i>
   </a>
 </li>
+<li>
+  <a href="{{ h.url_for('user.index') }}" title="{{ _('Download Survey Answers') }}">
+    <i class="fa fa-download"></i>
+  </a>
+</li>
 {% endif %}
 {{ super() }}
 {% endblock %}
